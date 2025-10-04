@@ -9,11 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import modeloDatos.Chofer;
-import modeloDatos.Cliente;
-import modeloDatos.Pedido;
-import modeloDatos.Vehiculo;
-import modeloDatos.Viaje;
+import modeloDatos.*;
 import modeloNegocio.Empresa;
 import util.Constantes;
 import util.Mensajes;
@@ -60,8 +56,7 @@ public class Testing {
 	@Test
 	public void testAgregarPedido() {
 		try {
-			Cliente cliente = new Cliente("Usuario1", "pass1", "nombreReal1");
-			this.empresa.agregarPedido(new Pedido(cliente, 4, false, false, 1, Constantes.ZONA_STANDARD));
+			this.empresa.agregarPedido(new Pedido(new Cliente("Usuario1", "pass1", "nombreReal1"), 4, false, false, 1, Constantes.ZONA_STANDARD));
 			fail("Deberia haber saltado excepción");
 			
 		}
@@ -78,8 +73,21 @@ public class Testing {
 			fail("SinVehiculoParaPedidoException. Deberia haber saltado otra excepcion");
 		}
 		
+	}	
+	
+	@Test
+	public void testAgregarVehiculo() {
+		Auto veh = new Auto("AAA111",4,false);
+		try {
+			this.empresa.agregarVehiculo(veh);
+			assertTrue("Vehiculo agregado", !this.empresa.getVehiculos().isEmpty());			
+		}
+		catch(excepciones.VehiculoRepetidoException e){
+			fail("No deberia haber saltado la excepción");
+		}
+		
 	}
-	
-	
 
+	
 }
+	
