@@ -41,8 +41,11 @@ public class Escenario2 {
 		
 		try {
 			this.empresa.login("admin", "admin");
+			
+			
 			this.empresa.agregarCliente("Usuario1", "12345678", "NombreReal1");
 			this.empresa.agregarChofer(new ChoferPermanente("11111111","nombreRealChofer1",2020,4));
+			
 			
 			this.empresa.agregarVehiculo(new Auto("AAA111",4,false));
 			this.empresa.agregarVehiculo(new Moto("AAA222"));
@@ -55,6 +58,36 @@ public class Escenario2 {
 	}
 
 
+	@Test
+	public void testLoginUserNoExiste() {
+		try {
+			this.empresa.login("UserInexistente", "12345678");
+			fail("Deberia haber saltado excepción");
+		}
+		catch (excepciones.UsuarioNoExisteException e) {
+			assertTrue("Falló correctamente", true);			
+		}
+		catch(Exception e) {
+			fail("Excpeción incorrecta");
+		}
+	}
+	
+	@Test
+	public void testLoginPassIncorrecta() {
+		try {
+			this.empresa.login("admin", "12345678"); //Creo que funciona.
+			fail("Deberia haber saltado excepción");
+		}
+		catch (excepciones.PasswordErroneaException e) {
+			assertTrue("Falló correctamente", true);			
+		}
+		catch(excepciones.UsuarioNoExisteException e) {
+			fail("Excepción incorrecta");
+		}
+		
+	}
+	
+	
 	@Test 
 	public void testAgregarChofer() { 
 		Chofer chofer = new ChoferPermanente("11111111","nombreRealChofer1",2020,4);
@@ -67,27 +100,6 @@ public class Escenario2 {
 		}
 	}
 	
-	@Test
-	public void testAgregarPedido() {
-		try {
-			this.empresa.agregarPedido(new Pedido(this.empresa.getClientes().get("Usuario1"), 4, false, false, 1, Constantes.ZONA_STANDARD));
-			assertTrue("Pedido agregado con exito", !this.empresa.getPedidos().isEmpty());
-			
-		}
-		catch(excepciones.ClienteNoExisteException e) {
-			fail("ClienteNoExisteException");
-		}
-		catch(excepciones.ClienteConViajePendienteException e) {
-			fail("ClienteConViajePendienteException");
-		}
-		catch(excepciones.ClienteConPedidoPendienteException e) {
-			fail("ClienteConPedidoPendienteException");
-		}
-		catch(excepciones.SinVehiculoParaPedidoException e) {
-			fail("SinVehiculoParaPedidoException");
-		}
-		
-	}
 	
 	@Test
 	public void testAgregarVehiculo() {
@@ -142,6 +154,9 @@ public class Escenario2 {
 				
 		}
 	}
+	
+	//testear geters y seters propios del administrador.
+	//Los iterator no se testean.
 	
 }
 

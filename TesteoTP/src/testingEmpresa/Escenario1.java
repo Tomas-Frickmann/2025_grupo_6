@@ -14,30 +14,50 @@ import modeloNegocio.Empresa;
 import util.Constantes;
 import util.Mensajes;
 
-public class Testing {
+public class Escenario1 {
 	private Empresa empresa;
 
 	@Before
 	public void setUp() throws Exception {
-		this.Escenario1();
+		this.escenario1();
 	}
 
 	@After
 	public void tearDown() throws Exception {
 	}
 	
-	public void Escenario1() {
-		this.empresa = Empresa.getInstance();
-		this.empresa.setChoferes(new HashMap <String,Chofer>());
-		this.empresa.setChoferesDesocupados(new ArrayList <Chofer>());
-		this.empresa.setClientes(new HashMap <String,Cliente>());
-		this.empresa.setPedidos(new HashMap <Cliente,Pedido>());
-		this.empresa.setVehiculos(new HashMap <String,Vehiculo>());
-		this.empresa.setVehiculosDesocupados(new ArrayList <Vehiculo>());
-		this.empresa.setViajesIniciados(new HashMap <Cliente,Viaje>());
-		this.empresa.setViajesTerminados(new ArrayList <Viaje>());	
+	public void escenario1() {
+		try {
+			this.empresa = Empresa.getInstance();
+			this.empresa.login("admin", "admin");
+			
+			this.empresa.setChoferes(new HashMap <String,Chofer>());
+			this.empresa.setChoferesDesocupados(new ArrayList <Chofer>());
+			this.empresa.setClientes(new HashMap <String,Cliente>());
+			this.empresa.setPedidos(new HashMap <Cliente,Pedido>());
+			this.empresa.setVehiculos(new HashMap <String,Vehiculo>());
+			this.empresa.setVehiculosDesocupados(new ArrayList <Vehiculo>());
+			this.empresa.setViajesIniciados(new HashMap <Cliente,Viaje>());
+			this.empresa.setViajesTerminados(new ArrayList <Viaje>());	
 		//Escenario vacio
+		} catch (Exception e) {
+			System.out.println("Fallo al registrar admin");
+		
+			}
 	}
+	
+	@Test
+	public void testLoginAdmin() {
+		//No se que hacer aca la verdad. Funciona, por ende pueden haber varios admin al mismo tiempo.(?
+		try {
+			this.empresa.login("admin", "admin");
+			assertTrue("Admin logeado", true);
+		}
+		catch(Exception e) {
+			fail("Fallo al registrar admin ");
+		}
+	}
+
 
 	@Test
 	public void testAgregarCliente() {
@@ -53,8 +73,8 @@ public class Testing {
 		
 	}
 	
-	@Test
-	public void testAgregarPedido() {
+	@Test //Agregar pedido podria testearse en otro escenario, este escenario tiene un administrador y el no se ocupa de eso.
+	public void testAgregarPedido() { 
 		try {
 			this.empresa.agregarPedido(new Pedido(new Cliente("Usuario1", "pass1", "nombreReal1"), 4, false, false, 1, Constantes.ZONA_STANDARD));
 			fail("Deberia haber saltado excepción");
@@ -88,6 +108,12 @@ public class Testing {
 		
 	}
 
+	public void testisAdmin() {
+		assertTrue("Admin logueado",this.empresa.isAdmin());
+	}
 	
-}
+	
+	//Deberia devolver true, en otro escenario hay que loguear a un cliente
+	
+}//Geters y seters aca no por que no tendria sentido testearlos
 	

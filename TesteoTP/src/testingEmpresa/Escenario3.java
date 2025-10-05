@@ -49,7 +49,7 @@ public class Escenario3 {
 			this.empresa.agregarVehiculo(new Moto("AAA222"));
 			
 			Cliente cliente1 = this.empresa.getClientes().get("Usuario1");
-			this.empresa.agregarPedido(new Pedido(cliente1, 4, false, false, 1, Constantes.ZONA_STANDARD));
+			// this.empresa.agregarPedido(new Pedido(cliente1, 4, false, false, 1, Constantes.ZONA_STANDARD));
 			
 			this.empresa.login("Usuario1", "12345678");
 			//Este escenario no tiene viajesIniciados
@@ -60,12 +60,35 @@ public class Escenario3 {
 	}
 	
 	@Test
-	public void testAgregarPedido() {
-		Cliente cliente= this.empresa.getClientes().get("Usuario1");
-		Pedido pedido=new Pedido(cliente, 4, false, false, 1, Constantes.ZONA_STANDARD);
-	  try {
-		this.empresa.agregarPedido(pedido);
-		fail("Debería lanzar ClienteConPedidoPendienteException");	
+	public void testAgregarPedidoClienteInexistente() {
+		try {
+			Cliente c3 = new Cliente("User3","12345678","nombreReal3"); //
+			this.empresa.agregarPedido(new Pedido(c3, 4, false, false, 1, Constantes.ZONA_STANDARD));
+			fail("Deberia saltar excepción");
+			
+		}
+		catch(excepciones.ClienteNoExisteException e) {
+			assertTrue("Falló correctamente", this.empresa.getClientes().get("user3") == null);
+		}
+		catch(excepciones.ClienteConViajePendienteException e) {
+			fail("ClienteConViajePendienteException");
+		}
+		catch(excepciones.ClienteConPedidoPendienteException e) {
+			fail("ClienteConPedidoPendienteException");
+		}
+		catch(excepciones.SinVehiculoParaPedidoException e) {
+			fail("SinVehiculoParaPedidoException");
+		}
+		
+	}
+	
+	
+	@Test
+	public void testAgregarPedidoUnico() {
+		try {
+			this.empresa.agregarPedido(new Pedido(this.empresa.getClientes().get("Usuario1"), 4, false, false, 1, Constantes.ZONA_STANDARD));
+			assertTrue("Pedido agregado con exito", this.empresa.getPedidoDeCliente(this.empresa.getClientes().get("Usuario1")) != null);
+			
 		}
 		catch(excepciones.ClienteNoExisteException e) {
 			fail("ClienteNoExisteException");
@@ -74,7 +97,7 @@ public class Escenario3 {
 			fail("ClienteConViajePendienteException");
 		}
 		catch(excepciones.ClienteConPedidoPendienteException e) {
-			assertTrue(Mensajes.CLIENTE_CON_PEDIDO_PENDIENTE.getValor(), this.empresa.getPedidoDeCliente(cliente) != null );
+			fail("ClienteConPedidoPendienteException");
 		}
 		catch(excepciones.SinVehiculoParaPedidoException e) {
 			fail("SinVehiculoParaPedidoException");

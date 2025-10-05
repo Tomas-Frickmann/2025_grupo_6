@@ -63,5 +63,30 @@ public class Escenario4 {
 		}
 	}
 	
+	
+	@Test
+	public void testAgregarPedidoSobrante() {
+		Cliente cliente= this.empresa.getClientes().get("Usuario1");
+		Pedido pedido=new Pedido(cliente, 4, false, false, 1, Constantes.ZONA_STANDARD);
+	  try {
+		this.empresa.agregarPedido(pedido);
+		fail("Debería lanzar ClienteConPedidoPendienteException");	
+		}
+		catch(excepciones.ClienteNoExisteException e) {
+			fail("ClienteNoExisteException");
+		}
+		catch(excepciones.ClienteConViajePendienteException e) {
+			fail("ClienteConViajePendienteException");
+		}
+		catch(excepciones.ClienteConPedidoPendienteException e) {
+			assertTrue(Mensajes.CLIENTE_CON_PEDIDO_PENDIENTE.getValor(), this.empresa.getPedidoDeCliente(cliente) != null );
+		}
+		catch(excepciones.SinVehiculoParaPedidoException e) {
+			fail("SinVehiculoParaPedidoException");
+		}
+		
+	}
+	
+	
 }
 
