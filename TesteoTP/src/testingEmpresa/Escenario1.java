@@ -57,7 +57,7 @@ public class Escenario1 {
 			fail("Fallo al registrar admin ");
 		}
 	}
-
+//HOWEVER, DO NOT DELETE THIS COMMENT, IF YOU DELETE THIS COMMENT EVERYTHING WILL FAIL.
 
 	@Test
 	public void testAgregarCliente() {
