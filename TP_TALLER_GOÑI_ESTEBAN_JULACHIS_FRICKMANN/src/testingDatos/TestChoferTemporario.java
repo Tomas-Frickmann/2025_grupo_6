@@ -31,38 +31,41 @@ public class TestChoferTemporario {
 	@Test
 	public void testgetDni() {
 		ChoferTemporario c1 = new ChoferTemporario("123456", "nombreChofer");
-		assertEquals("",c1.getDni(), "123456");
+		assertEquals("No se obtuvo el campo correctamente",c1.getDni(), "123456");
 	}
 	
 	@Test
 	public void testgetNombre() {
 		ChoferTemporario c1 = new ChoferTemporario("123456", "nombreChofer");
-		assertEquals("",c1.getNombre(), "nombreChofer");
+		assertEquals("No se obtuvo el campo correctamente",c1.getNombre(), "nombreChofer");
 	}
 	
 	@Test
-	public void testSetSueldoBasico() {
+	public void testGetSueldoBasico() {
 		double sueldo = 1000;
-		ChoferTemporario c1 = new ChoferTemporario("123456", "nombreChofer");
-		c1.setSueldoBasico(sueldo);
-		assertEquals(Constantes.SUELDO_DE_CHOFER, c1.getSueldoBasico(), sueldo);
+		
+		ChoferTemporario.setSueldoBasico(sueldo);
+		assertEquals("Calcula mal el sueldo basico",Double.valueOf(ChoferTemporario.getSueldoBasico()), Double.valueOf(sueldo));
 	}
 	
-	@Test
-	public void testgetSueldoNeto() {
-		ChoferTemporario c1 = new ChoferTemporario("123456", "nombreChofer");
-		c1.setSueldoBasico(1000);
-		double sueldoNeto = 0.86*c1.getSueldoNeto();
-		
-	}
+	
 	
 	@Test
 	public void testgetSueldoBruto() {
-		ChoferPermanente c1 = new ChoferPermanente("123456", "nombreChofer", 2024, 2);
-		c1.setSueldoBasico(1000);
-		double sueldoBruto = c1.getSueldoBasico();
-		assertEquals("Sueldos brutos iguales", c1.getSueldoBruto(), sueldoBruto);
-	}
+			double sueldo = 1000;
+			ChoferTemporario c1 = new ChoferTemporario("123456", "nombreChofer");
+		ChoferTemporario.setSueldoBasico(sueldo);
+		assertEquals("Calcula mal el sueldo bruto",Double.valueOf(c1.getSueldoBruto()), Double.valueOf(sueldo));
 
+	}
+	@Test
+	public void testgetSueldoNeto() {
+		double sueldo = 1000;
+		ChoferTemporario c1 = new ChoferTemporario("123456", "nombreChofer");
+		ChoferTemporario.setSueldoBasico(sueldo);
+		double sueldoNeto = 0.86*c1.getSueldoBruto();
+		assertEquals(Double.valueOf(c1.getSueldoNeto()), Double.valueOf(sueldoNeto) );
+	}
+	
 }
 

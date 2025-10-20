@@ -22,18 +22,21 @@ public class TestAdministrador {
 
 	@Test
 	public void testgetNombreUsuario() {
-		assertEquals("","admin",admin.getNombreUsuario());
+		assertEquals("El Nombre no se recupera correctamente","admin",admin.getNombreUsuario());
 		
 	}
 	
 	@Test
 	public void testgetPass() {
-		assertEquals("","admin",admin.getPass());
+		assertEquals("La contraseña no se recupera correcatmente","admin",admin.getPass());
 	}
 
 	@Test
 	public void testgetInstance() {
-		Administrador ad = admin.getInstance();
-		assertEquals("",ad,admin);
+		Administrador ad = Administrador.getInstance();
+		assertEquals("Devuelve otra instacia de administrador",ad,admin);
 	}
+	
+	
+	
 }
