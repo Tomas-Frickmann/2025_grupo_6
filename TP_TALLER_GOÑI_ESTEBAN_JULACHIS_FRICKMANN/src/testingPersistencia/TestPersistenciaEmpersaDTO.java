@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -23,7 +22,7 @@ import modeloDatos.Viaje;
 import persistencia.EmpresaDTO;
 import util.Constantes;
 
-public class TestPersistenciaEmpersaDTO implements Serializable {
+public class TestPersistenciaEmpersaDTO {
 
 
 	@Before
@@ -109,11 +108,5 @@ public class TestPersistenciaEmpersaDTO implements Serializable {
 		viajesTerminados.add(viaje);
 		edto.setViajesTerminados(viajesTerminados);
 		assertEquals("error en viajes terminados",viajesTerminados,edto.getViajesTerminados());
-		
-		
-
-		
 	}
-	
-
 }
