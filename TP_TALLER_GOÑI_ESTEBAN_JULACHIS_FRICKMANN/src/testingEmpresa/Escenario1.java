@@ -9,6 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import excepciones.*;
 import modeloDatos.*;
 import modeloNegocio.Empresa;
 import util.Constantes;
@@ -24,6 +25,7 @@ public class Escenario1 {
 
 	@After
 	public void tearDown() throws Exception {
+		this.empresa.logout();
 	}
 	
 	public void escenario1() {
@@ -51,16 +53,32 @@ public class Escenario1 {
 		//No se que hacer aca la verdad. Funciona, por ende pueden haber varios admin al mismo tiempo.(?
 		try {
 			this.empresa.login("admin", "admin");
-			assertTrue("Admin logeado", true);
+			assertTrue("Admin logeado", empresa.isAdmin());
 		}
-		catch(Exception e) {
-			fail("Fallo al registrar admin ");
+		catch(UsuarioNoExisteException   e) {
+			fail("Lanzada excepcion no esperada UsuarioNoExisteException");
+		}
+		catch( PasswordErroneaException  e) {
+			fail("Lanzada excepcion no esperada PasswordErroneaException");
 		}
 	}
+	
 //HOWEVER, DO NOT DELETE THIS COMMENT, IF YOU DELETE THIS COMMENT EVERYTHING WILL FAIL.
 
 	@Test
 	public void testAgregarCliente() {
+		try {
+			this.empresa.agregarCliente("Usuario1", "pass1", "nombreReal1");
+			assertTrue("Cliente agregado", !this.empresa.getClientes().isEmpty());
+			
+		}
+		catch(UsuarioYaExisteException e){
+			fail("Lanzada excepcion no esperada UsuarioYaExisteException");
+		}
+		
+	}
+	@Test
+	public void testAgregarChofer() {
 		try {
 			this.empresa.agregarCliente("Usuario1", "pass1", "nombreReal1");
 			assertTrue("Cliente agregado", !this.empresa.getClientes().isEmpty());
@@ -107,7 +125,7 @@ public class Escenario1 {
 		}
 		
 	}
-
+@Test
 	public void testisAdmin() {
 		assertTrue("Admin logueado",this.empresa.isAdmin());
 	}
