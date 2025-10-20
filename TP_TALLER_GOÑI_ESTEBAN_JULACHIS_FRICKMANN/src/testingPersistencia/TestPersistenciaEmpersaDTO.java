@@ -21,6 +21,7 @@ import modeloDatos.Pedido;
 import modeloDatos.Vehiculo;
 import modeloDatos.Viaje;
 import persistencia.EmpresaDTO;
+import util.Constantes;
 
 public class TestPersistenciaEmpersaDTO implements Serializable {
 
@@ -60,9 +61,9 @@ public class TestPersistenciaEmpersaDTO implements Serializable {
 	@Test
 	public void testGetYSet() {
 		EmpresaDTO edto= new EmpresaDTO();
-		ChoferPermanente chofer = new ChoferPermanente("aaaa","1234",2,2);
+		ChoferPermanente chofer = new ChoferPermanente("aaaa","1234",2000,2);
 		Cliente cliente=new Cliente("aaaa","1234","aaaa");
-		Pedido pedido= new Pedido(cliente,1,true,true,1,"aaaa");
+		Pedido pedido= new Pedido(cliente,1,true,true,1,Constantes.ZONA_STANDARD);
 		Vehiculo vehiculo= new Auto("aaaa",2,true);
 		Viaje viaje=new Viaje(pedido,chofer,vehiculo);
 		
@@ -79,7 +80,7 @@ public class TestPersistenciaEmpersaDTO implements Serializable {
 		HashMap<String,Cliente> clientes = new HashMap<>();
 		clientes.put("aaaa", cliente);
 		edto.setClientes(clientes);
-		assertEquals("error en clientes",cliente,edto.getClientes());
+		assertEquals("error en clientes",clientes,edto.getClientes());
 		
 		HashMap <Cliente,Pedido> pedidos =new HashMap<>();
 		pedidos.put(cliente, pedido);
