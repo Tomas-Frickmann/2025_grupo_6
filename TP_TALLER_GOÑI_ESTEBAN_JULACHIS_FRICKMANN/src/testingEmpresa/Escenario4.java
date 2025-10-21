@@ -43,19 +43,22 @@ public class Escenario4 {
 			this.empresa.agregarCliente("Usuario2", "12345677", "nombreRealCliente2");
 			
 			this.empresa.agregarChofer(new ChoferPermanente("22222222","nombreRealChofer1",2020,4));
-			
 			this.empresa.agregarVehiculo(new Auto("BBB111",4,false));
 			this.empresa.agregarVehiculo(new Moto("BBB222"));
 			
 			Cliente cliente1 = this.empresa.getClientes().get("Usuario1");
-			this.empresa.agregarPedido(new Pedido(cliente1, 4, false, false, 1, Constantes.ZONA_STANDARD));
-			
 			Cliente cliente2 = this.empresa.getClientes().get("Usuario2");
+			this.empresa.agregarPedido(new Pedido(cliente2, 4, false, false, 1, Constantes.ZONA_STANDARD));
+			
+			this.empresa.agregarPedido(new Pedido(cliente1, 4, false, false, 1, Constantes.ZONA_STANDARD)); 
+			
 			Pedido p = this.empresa.getPedidoDeCliente(cliente2);
 			Chofer c = this.empresa.getChoferesDesocupados().get(0);
 			Vehiculo a = this.empresa.getVehiculosDesocupados().get(0);
 			
 			this.empresa.crearViaje(p, c, a);
+			
+			
 			
 		}
 		catch(Exception e) {
@@ -66,27 +69,94 @@ public class Escenario4 {
 	
 	@Test
 	public void testAgregarPedidoSobrante() {
-		Cliente cliente= this.empresa.getClientes().get("Usuario1");
-		Pedido pedido=new Pedido(cliente, 4, false, false, 1, Constantes.ZONA_STANDARD);
-	  try {
-		this.empresa.agregarPedido(pedido);
-		fail("Debería lanzar ClienteConPedidoPendienteException");	
-		}
-		catch(excepciones.ClienteNoExisteException e) {
-			fail("ClienteNoExisteException");
-		}
-		catch(excepciones.ClienteConViajePendienteException e) {
-			fail("ClienteConViajePendienteException");
-		}
-		catch(excepciones.ClienteConPedidoPendienteException e) {
-			assertTrue(Mensajes.CLIENTE_CON_PEDIDO_PENDIENTE.getValor(), this.empresa.getPedidoDeCliente(cliente) != null );
-		}
-		catch(excepciones.SinVehiculoParaPedidoException e) {
-			fail("SinVehiculoParaPedidoException");
-		}
-		
+	Cliente cliente= this.empresa.getClientes().get("Usuario1");
+	Pedido pedido=new Pedido(cliente, 4, false, false, 1, Constantes.ZONA_STANDARD);
+  try {
+	this.empresa.agregarPedido(pedido);
+	fail("Debería lanzar ClienteConPedidoPendienteException");	
+	}
+	catch(excepciones.ClienteNoExisteException e) {
+		fail("ClienteNoExisteException");
+	}
+	catch(excepciones.ClienteConViajePendienteException e) {
+		fail("ClienteConViajePendienteException");
+	}
+	catch(excepciones.ClienteConPedidoPendienteException e) {
+		assertTrue(Mensajes.CLIENTE_CON_PEDIDO_PENDIENTE.getValor(), this.empresa.getPedidoDeCliente(cliente) != null );
+	}
+	catch(excepciones.SinVehiculoParaPedidoException e) {
+		fail("SinVehiculoParaPedidoException");
 	}
 	
-	
+}
+
+	@Test 
+	public void testcalificacionDeChofer(){
+		System.out.println(this.empresa.getChoferesDesocupados());
+		Chofer chofer= this.empresa.getChoferes().get(0);
+		
+		try{
+			this.empresa.login("Usuario2", "12345677");
+			this.empresa.pagarYFinalizarViaje(7);
+			double calificaciones = this.empresa.calificacionDeChofer(chofer);
+			//Le cree un pedido a cada usuario, son ambos pedidos iguales, un usuario lo tiene como viaje, por lo visto pagaryfinalizar no lo hace correctamente
+			//loguee al usuario con el viaje y pagué el viaje pero el promedio (7/1) no resulta. 
+			
+			assertTrue("Cálculo correcto", calificaciones == this.empresa.getViajesTerminados().get(0).getCalificacion()/this.empresa.getViajesTerminados().size());
+		}
+		catch(excepciones.SinViajesException e){
+			fail("Deberia lanzar SinViajesException");
+		}
+		catch(Exception e) {
+			fail("Deberia lanzar otra excepcion");
+		}
+	}
+
+    @Test
+    public void testCrearViaje() {
+    	try {
+    		this.empresa.agregarChofer(new ChoferPermanente("33333","nombreRealChofer1",2020,4)); //Chofer nuevo 
+    		Pedido p = this.empresa.getPedidoDeCliente(this.empresa.getClientes().get("Usuario1")); //Pedido del cliente1
+			Chofer c = this.empresa.getChoferes().get(0);
+			Vehiculo a = this.empresa.getVehiculos().get(1);
+			this.empresa.crearViaje(p, c, a);
+			
+			fail("Deberia lanzar ChoferNoDisponibleException");
+    	}
+    	catch(excepciones.ChoferNoDisponibleException e) {
+			assertTrue("Chofer correctamente no disponible", true);
+		}
+    	catch(Exception e) {
+    		fail("Deberia lanzar ChoferNoDisponibleException");
+    	}
+    	
+    	
+    }
+
+    @Test
+    public void testPagarYFinalizarViaje() {
+    	try{
+			this.empresa.login("Usuario2", "12345677");
+			this.empresa.pagarYFinalizarViaje(7);
+			assertTrue("Viaje finalizado correctamente", this.empresa.getViajesTerminados().get(0).getCalificacion() == 7);
+    	}
+		catch(Exception e) {
+			fail("No deberia lanzar excepcion");
+		}
+    }
+    
+
+    @Test
+    public void testLoginUsuario() {
+    	this.empresa.setUsuarioLogeado(this.empresa.getClientes().get("Usuario2"));
+    	Usuario u = this.empresa.getUsuarioLogeado();
+    	assertTrue("Usuario logueado correctamente", u.getNombreUsuario().equals("Usuario2"));
+    }
+
+    @Test
+    public void testLogout() {
+    	this.empresa.logout();
+		assertTrue("Usuario deslogueado correctamente", this.empresa.getUsuarioLogeado() == null);
+    }
 }
 

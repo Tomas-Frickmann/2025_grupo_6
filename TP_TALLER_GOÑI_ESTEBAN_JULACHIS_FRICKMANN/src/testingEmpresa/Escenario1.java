@@ -57,7 +57,6 @@ public class Escenario1 {
 			fail("Deberia devolver la misma instancia del Singleton");
 	}
 	
-	
 	@Test 
 	public void testLoginAdmin() {
 		//No se que hacer aca la verdad. Funciona, por ende pueden haber varios admin al mismo tiempo.(?
@@ -87,6 +86,7 @@ public class Escenario1 {
 		}
 		
 	}
+	
 	@Test
 	public void testAgregarChofer() {
 	
@@ -136,6 +136,7 @@ public class Escenario1 {
 		}
 		
 	}
+	
 	@Test
 	public void testisAdmin() {
 		assertTrue("Admin logueado",this.empresa.isAdmin());

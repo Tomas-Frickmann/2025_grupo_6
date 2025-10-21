@@ -15,7 +15,7 @@ import util.Constantes;
 
 
 
-public class Escenario5 {
+public class Escenario5 { //NO USAR, ES INUTIL
 
 
 	@Before

@@ -82,7 +82,6 @@ public class Escenario3 {
 		
 	}
 	
-	
 	@Test
 	public void testAgregarPedidoUnico() {
 		try {
@@ -104,8 +103,7 @@ public class Escenario3 {
 		}
 		
 	}
-	
-	
+
 	@Test 
 	public void testgetChoferes(){
 		
@@ -113,8 +111,6 @@ public class Escenario3 {
 		choferes=this.empresa.getChoferes();
 		assertTrue(choferes.containsKey("11111111"));
 	}
-	
-	
 	
 	@Test
 	public void testcrearViaje(){
@@ -155,5 +151,31 @@ public class Escenario3 {
 		
 		
 	}
-	
+	//--------------------- Tests vacíos para completar ---------------------//
+	/*
+	@Test
+	public void testCalificacionDeChofer() {
+		
+	}*/ //Che, este en el excel esta para el escenario4, lo dejo como indicativo nomas pero borrenlo.
+
+	@Test
+	public void testCrearViaje() {
+	}
+	 @Test
+    public void testPagarYFinalizarViaje() {
+    }
+
+    @Test
+    public void testValidarPedido() {
+    }
+
+    @Test
+    public void testVehiculosOrdenadosPorPedido() {
+    }
+    
+    @Test
+    public void testIsAdminFalso() {
+    	assertTrue("El usuario logueado no es admin", !this.empresa.isAdmin());
+    }
 }
+

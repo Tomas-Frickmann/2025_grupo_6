@@ -44,7 +44,7 @@ public class Escenario2 {
 			
 			
 			this.empresa.agregarCliente("Usuario1", "12345678", "NombreReal1");
-			this.empresa.agregarChofer(new ChoferPermanente("11111111","nombreRealChofer1",2020,4));
+			this.empresa.agregarChofer(new ChoferPermanente("12345678","nombreRealChofer1",2020,4));
 			
 			
 			this.empresa.agregarVehiculo(new Auto("AAA111",4,false));
@@ -87,7 +87,6 @@ public class Escenario2 {
 		
 	}
 	
-	
 	@Test 
 	public void testAgregarChofer() { 
 		Chofer chofer = new ChoferPermanente("11111111","nombreRealChofer1",2020,4);
@@ -99,7 +98,6 @@ public class Escenario2 {
 			assertTrue(Mensajes.CHOFER_YA_REGISTRADO.getValor(),true);			
 		}
 	}
-	
 	
 	@Test
 	public void testAgregarVehiculo() {
@@ -118,7 +116,7 @@ public class Escenario2 {
 	public void testcalificacionDeChofer(){
 		Chofer chofer= this.empresa.getChoferesDesocupados().get(0);
 		try{
-			this.empresa.calificacionDeChofer(chofer);
+			double calificaciones = this.empresa.calificacionDeChofer(chofer);
 			fail("Deberia lanzar SinViajesException");
 		}
 		catch(excepciones.SinViajesException e){
@@ -154,9 +152,21 @@ public class Escenario2 {
 				
 		}
 	}
-	
-	//testear geters y seters propios del administrador.
-	//Los iterator no se testean.
+
+    @Test
+    public void testAgregarCliente() {
+    }
+
+    @Test
+    public void testAgregarPedido() {
+    }
+
+    @Test
+    public void testAgregarPedidoDuplicado() {
+    }
+    @Test
+    public void testLoginUsuario() {
+    }
 	
 }
 
