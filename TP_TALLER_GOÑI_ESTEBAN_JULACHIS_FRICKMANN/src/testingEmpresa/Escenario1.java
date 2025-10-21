@@ -1,5 +1,6 @@
 package testingEmpresa;
 
+import static junit.framework.Assert.assertSame;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
@@ -48,7 +49,16 @@ public class Escenario1 {
 			}
 	}
 	
-	@Test
+	
+	@Test	
+	public void testSingletonInstance(){
+		Empresa otraInstancia= Empresa.getInstance();
+		if (empresa!=otraInstancia) 
+			fail("Deberia devolver la misma instancia del Singleton");
+	}
+	
+	
+	@Test 
 	public void testLoginAdmin() {
 		//No se que hacer aca la verdad. Funciona, por ende pueden haber varios admin al mismo tiempo.(?
 		try {
@@ -79,14 +89,15 @@ public class Escenario1 {
 	}
 	@Test
 	public void testAgregarChofer() {
+	
+		Chofer chofer= new ChoferTemporario("dni1","nombre1"); 
 		try {
-			this.empresa.agregarCliente("Usuario1", "pass1", "nombreReal1");
-			assertTrue("Cliente agregado", !this.empresa.getClientes().isEmpty());
-			//assertTrue("No coincide el resultado", !(Math.abs(SalidaMedia-7.382)>0.01));
+			this.empresa.agregarChofer(chofer);
+			assertTrue("Chofer agregado", !this.empresa.getChoferes().isEmpty());
 		}
 		catch(Exception e){
 			String mensaje = e.getMessage();
-			assertTrue("No debio lanzar UsuarioYaExisteException", mensaje.equals(Mensajes.USUARIO_REPETIDO));
+			assertTrue("No debio lanzar ChoferRepetidoException", mensaje.equals(Mensajes.USUARIO_REPETIDO));
 		}
 		
 	}
@@ -125,7 +136,7 @@ public class Escenario1 {
 		}
 		
 	}
-@Test
+	@Test
 	public void testisAdmin() {
 		assertTrue("Admin logueado",this.empresa.isAdmin());
 	}
@@ -134,4 +145,3 @@ public class Escenario1 {
 	//Deberia devolver true, en otro escenario hay que loguear a un cliente
 	
 }//Geters y seters aca no por que no tendria sentido testearlos
-	
