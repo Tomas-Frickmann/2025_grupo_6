@@ -58,6 +58,13 @@ public class Escenario2 {
 	}
 
 
+	@Test	
+	public void testSingletonInstance(){
+		Empresa otraInstancia= Empresa.getInstance();
+		if (empresa!=otraInstancia) 
+			fail("Deberia devolver la misma instancia del Singleton");
+	}
+	
 	@Test
 	public void testLoginUserNoExiste() {
 		try {
@@ -87,7 +94,9 @@ public class Escenario2 {
 		
 	}
 	
-	@Test 
+		
+	@Test
+	
 	public void testAgregarChofer() { 
 		Chofer chofer = new ChoferPermanente("11111111","nombreRealChofer1",2020,4);
 		try {
@@ -111,7 +120,8 @@ public class Escenario2 {
 		}
 		
 	}
-
+	
+	
 	@Test 
 	public void testcalificacionDeChofer(){
 		Chofer chofer= this.empresa.getChoferesDesocupados().get(0);
@@ -152,13 +162,43 @@ public class Escenario2 {
 				
 		}
 	}
+	
 
-    @Test
-    public void testAgregarCliente() {
-    }
-
+	@Test 
+	public void testAgregarCliente() {
+		try {
+			this.empresa.agregarCliente("Usuario1", "12345678", "NombreReal1");
+			fail("Error debería lanzar excepcion UsuarioYaExisteException ");
+		}
+		catch(excepciones.UsuarioYaExisteException e){
+				Cliente existente = this.empresa.getClientes().get("Usuario1");
+				assertNotNull("El cliente existente no debe ser null", existente);
+				assertEquals("Nombre de usuario debe coincidir","Usuario1", existente.getNombreUsuario());
+				assertEquals("Nombre real debe coincidir", "NombreReal1", existente.getNombreReal());
+			}
+	}
+ 
     @Test
     public void testAgregarPedido() {
+    	Cliente cliente1 = this.empresa.getClientes().get("Usuario1");
+		Pedido pedido = new Pedido(cliente1, 4, false, false, 1, Constantes.ZONA_STANDARD);
+    try {
+    	this.empresa.agregarPedido(pedido);
+    	
+    }
+	catch(excepciones.ClienteNoExisteException e) {
+		fail("No debería haber saltado ClienteNoExisteException");
+	}
+    catch(excepciones.ClienteConPedidoPendienteException e) {
+    	fail("No debería haber saltado ClienteConPedidoPendienteException");
+	}
+	catch(excepciones.ClienteConViajePendienteException e) {
+		fail("ClienteConViajePendienteException. Deberia haber saltado otra excepcion");
+	}
+	catch(excepciones.SinVehiculoParaPedidoException e) {
+		fail("SinVehiculoParaPedidoException. Deberia haber saltado otra excepcion");
+	}
+	
     }
 
     @Test
