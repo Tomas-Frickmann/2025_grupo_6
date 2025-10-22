@@ -1,6 +1,6 @@
 package testingEmpresa;
 
-import static junit.framework.Assert.assertSame;
+
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;

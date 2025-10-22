@@ -44,12 +44,15 @@ public class Escenario2 {
 			
 			
 			this.empresa.agregarCliente("Usuario1", "12345678", "NombreReal1");
-			this.empresa.agregarChofer(new ChoferPermanente("12345678","nombreRealChofer1",2020,4));
+			Chofer chofer1= new ChoferPermanente("12345678","nombreRealChofer1",2020,4);
+			this.empresa.agregarChofer(chofer1);
 			
-			
-			this.empresa.agregarVehiculo(new Auto("AAA111",4,false));
-			this.empresa.agregarVehiculo(new Moto("AAA222"));
-			this.empresa.agregarVehiculo(new Combi("AAA333",10,true));
+			Auto auto1= new Auto("AAA111",4,false);
+			Moto moto1=new Moto("AAA222");
+			Combi combi1=new Combi("AAA333",10,true);
+			this.empresa.agregarVehiculo(auto1);
+			this.empresa.agregarVehiculo(moto1);
+			this.empresa.agregarVehiculo(combi1);
 			//Este escenario no tiene pedidos ni viajes iniciados
 		}
 		catch(Exception e) {
@@ -63,6 +66,7 @@ public class Escenario2 {
 		Empresa otraInstancia= Empresa.getInstance();
 		if (empresa!=otraInstancia) 
 			fail("Deberia devolver la misma instancia del Singleton");
+		
 	}
 	
 	@Test
@@ -96,7 +100,6 @@ public class Escenario2 {
 	
 		
 	@Test
-	
 	public void testAgregarChofer() { 
 		Chofer chofer = new ChoferPermanente("11111111","nombreRealChofer1",2020,4);
 		try {
@@ -122,17 +125,7 @@ public class Escenario2 {
 	}
 	
 	
-	@Test 
-	public void testcalificacionDeChofer(){
-		Chofer chofer= this.empresa.getChoferesDesocupados().get(0);
-		try{
-			double calificaciones = this.empresa.calificacionDeChofer(chofer);
-			fail("Deberia lanzar SinViajesException");
-		}
-		catch(excepciones.SinViajesException e){
-			assertTrue(Mensajes.CHOFER_SIN_VIAJES.getValor(),this.empresa.getChoferesDesocupados().contains(chofer));
-		}
-	}
+	
 	
 	@Test
 	public void testcrearViaje(){

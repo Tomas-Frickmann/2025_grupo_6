@@ -46,6 +46,8 @@ public class Escenario4 {
 			this.empresa.agregarVehiculo(new Auto("BBB111",4,false));
 			this.empresa.agregarVehiculo(new Moto("BBB222"));
 			
+			//Todas las variables creadas hacelo como atributo
+			
 			Cliente cliente1 = this.empresa.getClientes().get("Usuario1");
 			Cliente cliente2 = this.empresa.getClientes().get("Usuario2");
 			this.empresa.agregarPedido(new Pedido(cliente2, 4, false, false, 1, Constantes.ZONA_STANDARD));
@@ -92,12 +94,12 @@ public class Escenario4 {
 
 	@Test 
 	public void testcalificacionDeChofer(){
-		System.out.println(this.empresa.getChoferesDesocupados());
-		Chofer chofer= this.empresa.getChoferes().get(0);
+		
+		Chofer chofer= this.empresa.getChoferes().get("22222222");
 		
 		try{
 			this.empresa.login("Usuario2", "12345677");
-			this.empresa.pagarYFinalizarViaje(7);
+			this.empresa.pagarYFinalizarViaje(4);
 			double calificaciones = this.empresa.calificacionDeChofer(chofer);
 			//Le cree un pedido a cada usuario, son ambos pedidos iguales, un usuario lo tiene como viaje, por lo visto pagaryfinalizar no lo hace correctamente
 			//loguee al usuario con el viaje y pagué el viaje pero el promedio (7/1) no resulta. 
@@ -111,7 +113,23 @@ public class Escenario4 {
 			fail("Deberia lanzar otra excepcion");
 		}
 	}
-
+	@Test 
+	public void testcalificacionDeChofer_sin_viajes(){
+		
+		Chofer chofer= this.empresa.getChoferes().get("22222222");
+		
+		try{
+			
+			double calificaciones = this.empresa.calificacionDeChofer(chofer);
+			
+			fail("Deberia lanzar SinViajesException");
+			
+		}
+		catch(excepciones.SinViajesException e){
+			assertEquals("Debio lanzar el siguiente mensaje"+ Mensajes.CHOFER_SIN_VIAJES.getValor(),Mensajes.CHOFER_SIN_VIAJES.getValor(), e.getMessage());
+		}
+		
+	}
     @Test
     public void testCrearViaje() {
     	try {

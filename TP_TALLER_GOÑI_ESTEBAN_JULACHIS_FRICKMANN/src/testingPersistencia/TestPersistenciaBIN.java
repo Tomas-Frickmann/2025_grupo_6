@@ -1,7 +1,6 @@
 package testingPersistencia;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.File;
 
@@ -18,32 +17,78 @@ public class TestPersistenciaBIN {
 
 	@Before
 	public void setUp() throws Exception {
-		pbin = new PersistenciaBIN();
-	    temp = File.createTempFile("temp", ".bin");
+		this.pbin = new PersistenciaBIN();
+	    this.temp = File.createTempFile("temp", ".bin");
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		if (temp.exists()) {
-			temp.delete();
+		if (this.temp.exists()) {
+			this.temp.delete();
 		}
 	}
 
 	@Test
 	public void testLecturaYEscritura() {
 		try {
-			pbin.abrirOutput(temp.getAbsolutePath());
+			this.pbin.abrirOutput(temp.getAbsolutePath());
 			String objeto= "prueba de lectura y escritura";
-			pbin.escribir(objeto);
-			pbin.cerrarOutput();
+			this.pbin.escribir(objeto);
+			this.pbin.cerrarOutput();
 			
-			pbin.abrirInput(temp.getAbsolutePath());
+			this.pbin.abrirInput(temp.getAbsolutePath());
 			String leido= (String)pbin.leer();
-			pbin.cerrarInput();
+			this.pbin.cerrarInput();
 			assertEquals("lo escrito y lo leido son dos cosas distintas",objeto,leido);
 		}
 		catch(Exception e) {
 			fail("no deberia lanzar exepcion");
+		}
+	}
+	
+	@Test
+	public void testLectura_SinArchivo() {
+		try {
+			this.pbin.abrirInput("archivo_que_no_existe.bin");
+			fail("deberia lanzar exepcion por archivo inexistente");
+		}
+		catch(Exception e) {
+			assertTrue("El archivo no existe",true);
+			
+		}
+	}
+	
+	@Test
+	public void testLectura_ArchivoNull() {
+		try {
+			this.pbin.abrirInput(null);
+			fail("deberia lanzar exepcion por archivo inexistente");
+		}
+		catch(Exception e) {
+			assertTrue("El archivo no existe",true);
+			
+		}
+	}
+	
+	@Test
+	public void testCerrarSinAbrir_Input() {
+		try {
+			this.pbin.cerrarInput();
+			fail("Deberia lanzar excepcion al cerrar sin abrir");
+		}
+		catch(Exception e) {
+			assertTrue("IOException al cerrar sin abrir",true);
+		}
+	}
+	
+	@Test
+	public void testCerrarSinAbrir_Output() {
+		try {
+			this.pbin.cerrarOutput();
+			fail("Deberia lanzar excepcion al cerrar sin abrir");
+		}
+		catch(Exception e) {
+			assertTrue("IOException al cerrar sin abrir",true);
 		}
 	}
 

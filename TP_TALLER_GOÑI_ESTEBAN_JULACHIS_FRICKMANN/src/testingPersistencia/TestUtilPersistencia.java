@@ -39,7 +39,7 @@ public class TestUtilPersistencia {
 		Empresa e =Empresa.getInstance();
 		
 		ChoferPermanente chofer = new ChoferPermanente("aaaa","1234",2000,2);
-		Cliente cliente=new Cliente("aaaa","1234","aaaa");
+		Cliente cliente=new Cliente("LAU1234","1234","Lautaro");
 		Pedido pedido= new Pedido(cliente,1,true,true,1,Constantes.ZONA_STANDARD);
 		Vehiculo vehiculo= new Auto("aaaa",2,true);
 		Viaje viaje=new Viaje(pedido,chofer,vehiculo);
@@ -74,25 +74,25 @@ public class TestUtilPersistencia {
 		
 		edto = UtilPersistencia.EmpresaDtoFromEmpresa();
 		
-		assertEquals(e.getChoferes(), edto.getChoferes());
-		assertEquals(e.getChoferesDesocupados(), edto.getChoferesDesocupados());
-		assertEquals(e.getClientes(), edto.getClientes());
-		assertEquals(e.getPedidos(), edto.getPedidos());
-		assertEquals(e.getVehiculos(), edto.getVehiculos());
-		assertEquals(e.getVehiculosDesocupados(), edto.getVehiculosDesocupados());
-		assertEquals(e.getViajesIniciados(), edto.getViajesIniciados());
-		assertEquals(e.getViajesTerminados(), edto.getViajesTerminados());
-		assertEquals(e.getUsuarioLogeado(), edto.getUsuarioLogeado());
+		assertEquals("Error en chofer",e.getChoferes(), edto.getChoferes());
+		assertEquals("Error en chofer desocupado",e.getChoferesDesocupados(), edto.getChoferesDesocupados());
+		assertEquals("Error en clientes",e.getClientes(), edto.getClientes());
+		assertEquals("Error en pedidos",e.getPedidos(), edto.getPedidos());
+		assertEquals("Error en vehiculos",e.getVehiculos(), edto.getVehiculos());
+		assertEquals("Error en vehiculos desocupados",e.getVehiculosDesocupados(), edto.getVehiculosDesocupados());
+		assertEquals("Error en viajes iniciados",e.getViajesIniciados(), edto.getViajesIniciados());
+		assertEquals("Error en viajes terminados",e.getViajesTerminados(), edto.getViajesTerminados());
+		assertEquals("Error en usuario log",e.getUsuarioLogeado(), edto.getUsuarioLogeado());
 		
 	}
 	@Test
 	public void testDeEmpresaDTOAEmpresa() {
 		
-		EmpresaDTO edto =new EmpresaDTO();
-
-		
+		EmpresaDTO edto =new EmpresaDTO();		
 		ChoferPermanente chofer = new ChoferPermanente("aaaa","1234",2000,2);
-		Cliente cliente=new Cliente("aaaa","1234","aaaa");
+		
+		Cliente cliente=new Cliente("LAU1234","1234","Lautaro");
+		
 		Pedido pedido= new Pedido(cliente,1,true,true,1,Constantes.ZONA_STANDARD);
 		Vehiculo vehiculo= new Auto("aaaa",2,true);
 		Viaje viaje=new Viaje(pedido,chofer,vehiculo);
@@ -126,17 +126,19 @@ public class TestUtilPersistencia {
 		edto.setViajesTerminados(viajesTerminados);
 		
 		UtilPersistencia.empresaFromEmpresaDTO(edto);
-		
 		Empresa e =Empresa.getInstance();
-		assertEquals(e.getChoferes(), edto.getChoferes());
-		assertEquals(e.getChoferesDesocupados(), edto.getChoferesDesocupados());
-		assertEquals(e.getClientes(), edto.getClientes());
-		assertEquals(e.getPedidos(), edto.getPedidos());
-		assertEquals(e.getVehiculos(), edto.getVehiculos());
-		assertEquals(e.getVehiculosDesocupados(), edto.getVehiculosDesocupados());
-		assertEquals(e.getViajesIniciados(), edto.getViajesIniciados());
-		assertEquals(e.getViajesTerminados(), edto.getViajesTerminados());
-		assertEquals(e.getUsuarioLogeado(), edto.getUsuarioLogeado());
+		
+		assertEquals("Error en chofer",e.getChoferes(), edto.getChoferes());
+		assertEquals("Error en chofer desocupados",e.getChoferesDesocupados(), edto.getChoferesDesocupados());
+		assertEquals("Error en cliente",e.getClientes(), edto.getClientes());
+		assertEquals("Error en pedidos",e.getPedidos(), edto.getPedidos());
+		assertEquals("Error en vhiuculos",e.getVehiculos(), edto.getVehiculos());
+		assertEquals("Error en vehiculo desocupado",e.getVehiculosDesocupados(), edto.getVehiculosDesocupados());
+		assertEquals("Error en viaje iniciado",e.getViajesIniciados(), edto.getViajesIniciados());
+		assertEquals("Error en viajes terminados",e.getViajesTerminados(), edto.getViajesTerminados());
+		System.out.println("Usuario logueado en empresa: " + e.getUsuarioLogeado());
+		System.out.println("Usuario logueado en edto: " + edto.getUsuarioLogeado());
+		assertEquals("Error en Usuario logueado ",e.getUsuarioLogeado(), edto.getUsuarioLogeado());
 		
 	}
 	
