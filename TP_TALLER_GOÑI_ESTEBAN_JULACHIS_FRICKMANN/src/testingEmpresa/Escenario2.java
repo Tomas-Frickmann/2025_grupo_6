@@ -17,7 +17,12 @@ import util.Mensajes;
 
 public class Escenario2 {
 	Empresa empresa;
-
+	Chofer chofer1 = new ChoferPermanente("12345678","nombreRealChofer1",2020,4);
+	Auto auto1= new Auto("AAA111",4,false);
+	Moto moto1 = new Moto("AAA222");
+	Combi combi1 = new Combi("AAA333",10,true);
+	
+	Pedido pedido_cliente1 = null;
 	@Before
 	public void setUp() throws Exception {
 		this.escenario2();
@@ -42,14 +47,15 @@ public class Escenario2 {
 		try {
 			this.empresa.login("admin", "admin");
 			
-			
 			this.empresa.agregarCliente("Usuario1", "12345678", "NombreReal1");
-			Chofer chofer1= new ChoferPermanente("12345678","nombreRealChofer1",2020,4);
+			this.pedido_cliente1 = new Pedido(this.empresa.getClientes().get("Usuario1"), 4, false, false, 1, Constantes.ZONA_STANDARD);
+			Chofer chofer1 = this.chofer1;
 			this.empresa.agregarChofer(chofer1);
 			
-			Auto auto1= new Auto("AAA111",4,false);
-			Moto moto1=new Moto("AAA222");
-			Combi combi1=new Combi("AAA333",10,true);
+			Auto auto1 = this.auto1;
+			Moto moto1=this.moto1;
+			Combi combi1 = this.combi1;
+			
 			this.empresa.agregarVehiculo(auto1);
 			this.empresa.agregarVehiculo(moto1);
 			this.empresa.agregarVehiculo(combi1);
@@ -125,8 +131,6 @@ public class Escenario2 {
 	}
 	
 	
-	
-	
 	@Test
 	public void testcrearViaje(){
 		Cliente c1 = this.empresa.getClientes().get("Usuario1");
@@ -172,12 +176,9 @@ public class Escenario2 {
 	}
  
     @Test
-    public void testAgregarPedido() {
-    	Cliente cliente1 = this.empresa.getClientes().get("Usuario1");
-		Pedido pedido = new Pedido(cliente1, 4, false, false, 1, Constantes.ZONA_STANDARD);
+    public void testAgregarPedido() {		
     try {
-    	this.empresa.agregarPedido(pedido);
-    	
+    	this.empresa.agregarPedido(this.pedido_cliente1);    	
     }
 	catch(excepciones.ClienteNoExisteException e) {
 		fail("No debería haber saltado ClienteNoExisteException");
@@ -196,9 +197,39 @@ public class Escenario2 {
 
     @Test
     public void testAgregarPedidoDuplicado() {
+    	try {
+			this.empresa.agregarPedido(this.pedido_cliente1);    	
+			this.empresa.agregarPedido(this.pedido_cliente1);    	
+			fail("Debería haber lanzado ClienteConPedidoPendienteException");
+		}
+		catch(excepciones.ClienteNoExisteException e) {
+			fail("No debería haber saltado ClienteNoExisteException");
+		}
+		catch(excepciones.ClienteConPedidoPendienteException e) {
+			assertTrue(Mensajes.CLIENTE_CON_PEDIDO_PENDIENTE.getValor(),true);
+		}
+		catch(excepciones.ClienteConViajePendienteException e) {
+			fail("ClienteConViajePendienteException. Deberia haber saltado otra excepcion");
+		}
+		catch(excepciones.SinVehiculoParaPedidoException e) {
+			fail("SinVehiculoParaPedidoException. Deberia haber saltado otra excepcion");
+		}
+    	
+    	
     }
     @Test
-    public void testLoginUsuario() {
+    public void testLoginUsuarioCorrecto() {
+    	try {
+			this.empresa.login("Usuario1", "12345678");
+			assertTrue("Login correcto", true);
+		}
+		catch (excepciones.UsuarioNoExisteException e) {
+			fail("No debería haber saltado excepción");			
+		}
+		catch(Exception e) {
+			fail("No debería haber saltado excepción");
+		}   	
+    	
     }
 	
 }
