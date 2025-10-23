@@ -85,7 +85,7 @@ public class Escenario2 {
 			assertTrue("Falló correctamente", true);			
 		}
 		catch(Exception e) {
-			fail("Excpeción incorrecta");
+			fail(e.getMessage());
 		}
 	}
 	
@@ -99,7 +99,7 @@ public class Escenario2 {
 			assertTrue("Falló correctamente", true);			
 		}
 		catch(excepciones.UsuarioNoExisteException e) {
-			fail("Excepción incorrecta");
+			fail(e.getMessage());
 		}
 		
 	}
@@ -146,16 +146,16 @@ public class Escenario2 {
 		
 		}
 		catch(excepciones.ChoferNoDisponibleException e){
-			fail("ChoferNoDisponibleException. Debería saltar otra excepcion");
+			fail(e.getMessage());;
 		}
 		catch(excepciones.VehiculoNoDisponibleException e){
-			fail("VehiculoNoDisponibleException. Debería saltar otra excepcion");
+			fail(e.getMessage());
 		}
 		catch(excepciones.VehiculoNoValidoException e){
-			fail("VehiculoNoValidoException. Debería saltar otra excepcion");
+			fail(e.getMessage());
 		}
 		catch(excepciones.ClienteConViajePendienteException e){
-			fail("ClienteConViajePendienteException. Debería saltar otra excepcion");
+			fail(e.getMessage());
 				
 		}
 	}
@@ -181,16 +181,16 @@ public class Escenario2 {
     	this.empresa.agregarPedido(this.pedido_cliente1);    	
     }
 	catch(excepciones.ClienteNoExisteException e) {
-		fail("No debería haber saltado ClienteNoExisteException");
+		fail(e.getMessage());
 	}
     catch(excepciones.ClienteConPedidoPendienteException e) {
-    	fail("No debería haber saltado ClienteConPedidoPendienteException");
+    	fail(e.getMessage());
 	}
 	catch(excepciones.ClienteConViajePendienteException e) {
-		fail("ClienteConViajePendienteException. Deberia haber saltado otra excepcion");
+		fail(e.getMessage());
 	}
 	catch(excepciones.SinVehiculoParaPedidoException e) {
-		fail("SinVehiculoParaPedidoException. Deberia haber saltado otra excepcion");
+		fail(e.getMessage());
 	}
 	
     }
@@ -203,16 +203,16 @@ public class Escenario2 {
 			fail("Debería haber lanzado ClienteConPedidoPendienteException");
 		}
 		catch(excepciones.ClienteNoExisteException e) {
-			fail("No debería haber saltado ClienteNoExisteException");
+			fail(e.getMessage());
 		}
 		catch(excepciones.ClienteConPedidoPendienteException e) {
 			assertTrue(Mensajes.CLIENTE_CON_PEDIDO_PENDIENTE.getValor(),true);
 		}
 		catch(excepciones.ClienteConViajePendienteException e) {
-			fail("ClienteConViajePendienteException. Deberia haber saltado otra excepcion");
+			fail(e.getMessage());
 		}
 		catch(excepciones.SinVehiculoParaPedidoException e) {
-			fail("SinVehiculoParaPedidoException. Deberia haber saltado otra excepcion");
+			fail(e.getMessage());
 		}
     	
     	
@@ -224,10 +224,10 @@ public class Escenario2 {
 			assertTrue("Login correcto", true);
 		}
 		catch (excepciones.UsuarioNoExisteException e) {
-			fail("No debería haber saltado excepción");			
+			fail(e.getMessage());	
 		}
 		catch(Exception e) {
-			fail("No debería haber saltado excepción");
+			fail(e.getMessage());
 		}   	
     	
     }

@@ -74,10 +74,10 @@ public class Escenario1 {
 			assertTrue("Admin logeado", empresa.isAdmin());
 		}
 		catch(UsuarioNoExisteException   e) {
-			fail("Lanzada excepcion no esperada UsuarioNoExisteException");
+			fail(e.getMessage());
 		}
 		catch( PasswordErroneaException  e) {
-			fail("Lanzada excepcion no esperada PasswordErroneaException");
+			fail(e.getMessage());
 		}
 	}
 	
@@ -91,7 +91,7 @@ public class Escenario1 {
 			
 		}
 		catch(UsuarioYaExisteException e){
-			fail("Lanzada excepcion no esperada UsuarioYaExisteException");
+			fail(e.getMessage());
 		}
 		
 	}
@@ -105,8 +105,7 @@ public class Escenario1 {
 			assertTrue("Chofer agregado", !this.empresa.getChoferes().isEmpty());
 		}
 		catch(Exception e){
-			String mensaje = e.getMessage();
-			assertTrue("No debio lanzar ChoferRepetidoException", mensaje.equals(Mensajes.USUARIO_REPETIDO));
+			fail(e.getMessage());
 		}
 		
 	}
@@ -122,13 +121,13 @@ public class Escenario1 {
 			assertTrue("Salto correcto de excepcion, cliente inexistente", this.empresa.getClientes().get("cliente1") == null);
 		}
 		catch(excepciones.ClienteConViajePendienteException e) {
-			fail("ClienteConViajePendienteException. Deberia haber saltado otra excepcion");
+			fail(e.getMessage());
 		}
 		catch(excepciones.ClienteConPedidoPendienteException e) {
-			fail("ClienteConPedidoPendienteException. Deberia haber saltado otra excepcion");
+			fail(e.getMessage());
 		}
 		catch(excepciones.SinVehiculoParaPedidoException e) {
-			fail("SinVehiculoParaPedidoException. Deberia haber saltado otra excepcion");
+			fail(e.getMessage());
 		}
 		
 	}	
@@ -141,7 +140,7 @@ public class Escenario1 {
 			assertTrue("Vehiculo agregado", !this.empresa.getVehiculos().isEmpty());			
 		}
 		catch(excepciones.VehiculoRepetidoException e){
-			fail("No deberia haber saltado la excepción");
+			fail(e.getMessage());
 		}
 		
 	}
@@ -150,9 +149,6 @@ public class Escenario1 {
 	public void testisAdmin() {
 		assertTrue("Admin logueado",this.empresa.isAdmin());
 	}
-	
-	
-	//Deberia devolver true, en otro escenario hay que loguear a un cliente
 	
 	@Test
 	public void testgetHistorialViajeCliente_setViajesTerminados() {
