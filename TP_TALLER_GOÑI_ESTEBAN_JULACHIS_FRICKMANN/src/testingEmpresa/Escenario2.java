@@ -93,13 +93,14 @@ public class Escenario2 {
 	@Test
 	public void testLoginPassIncorrecta() {
 		try {
-			this.empresa.login("admin", "12345678"); 
+			
+			this.empresa.login("Usuario1", "contraseñamala"); 
 			fail("Deberia haber saltado excepción");
 		}
 		catch (excepciones.PasswordErroneaException e) {
 			assertEquals("Debio lanzar "+Mensajes.PASS_ERRONEO, Mensajes.PASS_ERRONEO.getValor(), e.getMessage());
-			assertEquals("Almacena mal el usuario ",e.getUsuarioPretendido(),"admin");		
-			assertEquals("Almacena mal el usuario ",e.getPasswordPretendida(),"12345678");
+			assertEquals("Almacena mal el usuario ",e.getUsuarioPretendido(),"Usuario1");		
+			assertEquals("Almacena mal el usuario ",e.getPasswordPretendida(),"contraseñamala");
 		}
 		catch(excepciones.UsuarioNoExisteException e) {
 			fail("No deberia lanzar UsuarioNoExisteException");
