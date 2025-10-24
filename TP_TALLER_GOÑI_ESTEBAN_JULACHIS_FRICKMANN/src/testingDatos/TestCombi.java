@@ -113,7 +113,7 @@ public class TestCombi {
 	}
 	@Test
 	public void testPuntajePedidoconMascota(){
-		Combi combi = new Combi("AA123BB", 5, true); //1° mascota 2° baul
+		Combi combi = new Combi("AA123BB", 5, false); //1° mascota 2° baul
 		Pedido pedido = new Pedido(new Cliente("Octi", "1234","Octavio"), 3, true, false, 3, Constantes.ZONA_STANDARD);
 		assertNull("No deberia calcular puntaje",combi.getPuntajePedido(pedido));
 		

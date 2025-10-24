@@ -136,8 +136,6 @@ public class TestUtilPersistencia {
 		assertEquals("Error en vehiculo desocupado",e.getVehiculosDesocupados(), edto.getVehiculosDesocupados());
 		assertEquals("Error en viaje iniciado",e.getViajesIniciados(), edto.getViajesIniciados());
 		assertEquals("Error en viajes terminados",e.getViajesTerminados(), edto.getViajesTerminados());
-		System.out.println("Usuario logueado en empresa: " + e.getUsuarioLogeado());
-		System.out.println("Usuario logueado en edto: " + edto.getUsuarioLogeado());
 		assertEquals("Error en Usuario logueado ",e.getUsuarioLogeado(), edto.getUsuarioLogeado());
 		
 	}

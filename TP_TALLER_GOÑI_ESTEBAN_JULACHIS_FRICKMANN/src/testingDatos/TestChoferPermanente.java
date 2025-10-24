@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import modeloDatos.*;
-import util.Constantes;
+
 
 public class TestChoferPermanente {
 	

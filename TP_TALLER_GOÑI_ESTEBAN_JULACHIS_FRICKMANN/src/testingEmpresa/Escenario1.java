@@ -23,6 +23,7 @@ import modeloNegocio.Empresa;
 import util.Constantes;
 import util.Mensajes;
 
+
 public class Escenario1 {
 	private Empresa empresa;
 	
@@ -68,7 +69,7 @@ public class Escenario1 {
 	
 	@Test 
 	public void testLoginAdmin() {
-		//No se que hacer aca la verdad. Funciona, por ende pueden haber varios admin al mismo tiempo.(?
+		
 		try {
 			this.empresa.login("admin", "admin");
 			assertTrue("Admin logeado", empresa.isAdmin());
@@ -84,7 +85,7 @@ public class Escenario1 {
 //HOWEVER, DO NOT DELETE THIS COMMENT, IF YOU DELETE THIS COMMENT EVERYTHING WILL FAIL.
 
 	@Test
-	public void testAgregarCliente() {
+	public void testAgregarCliente_sin_Clientes() {
 		try {
 			this.empresa.agregarCliente("Usuario1", "pass1", "nombreReal1");
 			assertTrue("Cliente agregado", !this.empresa.getClientes().isEmpty());
@@ -97,7 +98,7 @@ public class Escenario1 {
 	}
 	
 	@Test
-	public void testAgregarChofer() {
+	public void testAgregarChofer_sin_Chofer() {
 	
 		Chofer chofer= new ChoferTemporario("dni1","nombre1"); 
 		try {
@@ -110,37 +111,37 @@ public class Escenario1 {
 		
 	}
 	
-	@Test //Agregar pedido podria testearse en otro escenario, este escenario tiene un administrador y el no se ocupa de eso.
-	public void testAgregarPedido() { 
+	@Test 
+	public void testAgregarPedido_sin_Cliente() { 
 		try {
 			this.empresa.agregarPedido(new Pedido(new Cliente("Usuario1", "pass1", "nombreReal1"), 4, false, false, 1, Constantes.ZONA_STANDARD));
 			fail("Deberia haber saltado excepción");
 			
 		}
 		catch(excepciones.ClienteNoExisteException e) {
-			assertTrue("Salto correcto de excepcion, cliente inexistente", this.empresa.getClientes().get("cliente1") == null);
+			assertEquals("Debio lanzar el mensaje"+ Mensajes.CLIENTE_NO_EXISTE.getValor(), e.getMessage(),Mensajes.CLIENTE_NO_EXISTE.getValor());
 		}
 		catch(excepciones.ClienteConViajePendienteException e) {
-			fail(e.getMessage());
+			fail("No debio tirar ClienteConViajePendienteException");
 		}
 		catch(excepciones.ClienteConPedidoPendienteException e) {
-			fail(e.getMessage());
+			fail("No debio tirar ClienteConPedidoPendienteException");
 		}
 		catch(excepciones.SinVehiculoParaPedidoException e) {
-			fail(e.getMessage());
+			fail("No debio tirar SinVehiculoParaPedidoException");
 		}
 		
 	}	
 	
 	@Test
-	public void testAgregarVehiculo() {
+	public void testAgregarVehiculo_sin_Vehiculo() {
 		Auto veh = new Auto("AAA111",4,false);
 		try {
 			this.empresa.agregarVehiculo(veh);
 			assertTrue("Vehiculo agregado", !this.empresa.getVehiculos().isEmpty());			
 		}
 		catch(excepciones.VehiculoRepetidoException e){
-			fail(e.getMessage());
+			fail("No debio tirar VehiculoRepetidoException");
 		}
 		
 	}
@@ -278,7 +279,7 @@ public class Escenario1 {
 		assertSame("Choferes seteado y getteado correctamente", mapaChoferes, this.empresa.getChoferes());
 	}
 	@Test
-	public void setygetChoferesDesocupados_solodesocupados (){
+	public void setygetChoferesDesocupados_solo_desocupados (){
 
 		ArrayList <Chofer> choferesDesocupados = new ArrayList <Chofer>();
 		Chofer chofer1 = new ChoferTemporario("dni1", "nombre1");
@@ -377,12 +378,44 @@ public class Escenario1 {
 	}
 	
 	
+	@Test
+	public void TestgetTotalSalarios_sin_choferes() {
+		
+		
+		assertTrue("Deberia dar 0", this.empresa.getTotalSalarios()==0.0);
+		
+	}
+
 	
+
+	@Test 
 	
+	public void testgetsalarios() {
+
+		double sueldoBasico = 100000.0;
+		int antiguedad = 3;
+		int cantidadHijos = 2;
+		
+		ChoferTemporario.setSueldoBasico(sueldoBasico);
+		ChoferPermanente.setSueldoBasico(sueldoBasico);
+		
+		ChoferTemporario ct = new ChoferTemporario("dniT", "nombreT");
+		double BrutoTemp = ChoferTemporario.getSueldoBasico();
+		double NetoTemp = 0.86 * BrutoTemp;
+		assertEquals(Double.valueOf(BrutoTemp), Double.valueOf(ct.getSueldoBruto()));
+		assertEquals(Double.valueOf(NetoTemp), Double.valueOf(ct.getSueldoNeto()));
+
+		int anioactual = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
+		ChoferPermanente cp = new ChoferPermanente("dniP", "nombreP", anioactual - antiguedad, cantidadHijos);
 	
-	
-	
-	
+		int antiguedadCalc = cp.getAntiguedad();
+		int antiguedadUsada = (antiguedadCalc <= 20) ? antiguedadCalc : 20;
+		double SueldoBruto = ChoferPermanente.getSueldoBasico() + 0.05 * antiguedadUsada * ChoferPermanente.getSueldoBasico() + 0.07 * cp.getCantidadHijos() * ChoferPermanente.getSueldoBasico();
+		double SueldoNeto = 0.86 * SueldoBruto;
+				
+		assertEquals(Double.valueOf(SueldoBruto), Double.valueOf(cp.getSueldoBruto()));
+		assertEquals(Double.valueOf(SueldoNeto), Double.valueOf(cp.getSueldoNeto()));	
+	}
 	
 	
 	

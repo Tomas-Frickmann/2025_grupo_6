@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.FileOutputStream;
+
 import java.io.IOException;
 
 import org.junit.After;
@@ -80,8 +80,11 @@ public class TestPersistenciaBIN {
 			this.pbin.cerrarInput();
 			fail("Deberia lanzar excepcion al cerrar sin abrir");
 		}
-		catch(Exception e) {
+		catch(IOException e) {
 			assertTrue("IOException al cerrar sin abrir",true);
+		}
+		catch(Exception e) {
+			fail("Deberia lanzar IOException");
 		}
 	}
 	
@@ -91,8 +94,11 @@ public class TestPersistenciaBIN {
 			this.pbin.cerrarOutput();
 			fail("Deberia lanzar excepcion al cerrar sin abrir");
 		}
-		catch(Exception e) {
+		catch(IOException e) {
 			assertTrue("IOException al cerrar sin abrir",true);
+		}
+		catch(Exception e) {
+			fail("Deberia lanzar IOException");
 		}
 	}
 	

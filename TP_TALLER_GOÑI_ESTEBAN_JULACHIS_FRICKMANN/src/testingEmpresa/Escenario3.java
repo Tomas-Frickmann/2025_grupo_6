@@ -21,6 +21,7 @@ public class Escenario3 {
 	ChoferTemporario choferTemporario1;
 	Auto auto1;
 	Moto moto1;
+	Pedido pedido;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -43,6 +44,9 @@ public class Escenario3 {
 		this.empresa.setViajesTerminados(new ArrayList <Viaje>());
 		
 		try {
+			
+			
+			
 			this.empresa.agregarCliente("Usuario1", "12345678", "NombreReal1");
 			this.empresa.agregarCliente("Usuario2", "12345677", "nombreRealCliente2");
 			
@@ -56,6 +60,9 @@ public class Escenario3 {
 			this.empresa.agregarVehiculo(auto1);
 			this.empresa.agregarVehiculo(moto1);
 			
+			Pedido pedido1 = new Pedido(this.empresa.getClientes().get("Usuario1"), 4, false, false, 1, Constantes.ZONA_STANDARD);
+			this.pedido = pedido1;
+			this.empresa.agregarPedido(pedido1);
 			
 			this.empresa.login("Usuario1", "12345678");
 			//Este escenario no tiene viajesIniciados
@@ -66,17 +73,16 @@ public class Escenario3 {
 	}
 	
 	@Test
-	public void testAgregarPedidoClienteInexistente() {
+	public void testAgregarPedido_SinVehiculo() {
+		Cliente c3 = this.empresa.getClientes().get("Usuario2"); //
+		Pedido pedido = new Pedido(c3, 4, true, false, 1, Constantes.ZONA_STANDARD);
 		try {
-			Cliente c3 = new Cliente("User3","12345678","nombreReal3"); //
-			Pedido pedido = new Pedido(c3, 4, false, false, 1, Constantes.ZONA_STANDARD);
 			this.empresa.agregarPedido(pedido);
 			fail("Deberia saltar excepción");
 			
 		}
 		catch(excepciones.ClienteNoExisteException e) {
-			assertTrue("Falló correctamente", this.empresa.getClientes().get("user3") == null);
-			//La excepcion no guarda al cliente
+			fail(e.getMessage());
 		}
 		catch(excepciones.ClienteConViajePendienteException e) {
 			fail(e.getMessage());
@@ -85,30 +91,38 @@ public class Escenario3 {
 			fail(e.getMessage());
 		}
 		catch(excepciones.SinVehiculoParaPedidoException e) {
-			fail(e.getMessage());
+			assertTrue(Mensajes.SIN_VEHICULO_PARA_PEDIDO.getValor(), this.empresa.validarPedido(pedido) == false);
 		}
 		
 	}
 	
 	@Test
-	public void testAgregarPedidoUnico() {
+	public void testAgregarPedido_ClienteViajePendiente() {
 		try {
-			Pedido pedido = new Pedido(this.empresa.getClientes().get("Usuario1"), 4, false, false, 1, Constantes.ZONA_STANDARD);
+			Pedido pedido = new Pedido(this.empresa.getClientes().get("Usuario2"), 4, false, false, 1, Constantes.ZONA_STANDARD);
 			this.empresa.agregarPedido(pedido);
-			assertTrue("Pedido agregado con exito", this.empresa.getPedidoDeCliente(this.empresa.getClientes().get("Usuario1")) != null);
+			this.empresa.crearViaje(pedido, this.choferPermanente1, this.auto1);
+			Pedido pedido2 = new Pedido(this.empresa.getClientes().get("Usuario2"), 2, false, false, 1, Constantes.ZONA_STANDARD);
+			this.empresa.agregarPedido(pedido2);
+			
+			fail("Deberia saltar excepción ClienteConViajePendienteException");
 			
 		}
 		catch(excepciones.ClienteNoExisteException e) {
-			fail(e.getMessage());
+			fail("no deberia lanzar esta excepcion" );
 		}
 		catch(excepciones.ClienteConViajePendienteException e) {
-			fail(e.getMessage());
+			assertEquals(Mensajes.CLIENTE_CON_VIAJE_PENDIENTE.getValor(), Mensajes.CLIENTE_CON_VIAJE_PENDIENTE.getValor(), e.getMessage());
+			
 		}
 		catch(excepciones.ClienteConPedidoPendienteException e) {
-			fail(e.getMessage());
-		}
+			fail("No deberia lanzar esta ClienteConPedidoPendienteException");
+					}
 		catch(excepciones.SinVehiculoParaPedidoException e) {
-			fail(e.getMessage());
+			fail("No deberia lanzar esta SinVehiculoParaPedidoException");
+		}
+		catch(Exception e) {
+			fail("Excepciones externas al metodo" + e.getMessage());
 		}
 		
 	}
@@ -116,32 +130,142 @@ public class Escenario3 {
 	
 	
 	@Test
-	public void testcrearViajeCorrecto(){
+	public void testcrearViaje_CasoBase(){
 		Cliente c1 = this.empresa.getClientes().get("Usuario1");
-		Pedido pedido= this.empresa.getPedidoDeCliente(c1);
+		//Pedido pedido= this.empresa.getPedidoDeCliente(c1);
 		Chofer chofer= this.empresa.getChoferesDesocupados().get(0);
 		Vehiculo vehiculo=this.empresa.getVehiculosDesocupados().get(0);
 		try{
-			this.empresa.crearViaje(pedido, chofer, vehiculo);
+			this.empresa.crearViaje(this.pedido, chofer, vehiculo);
 			assertTrue("Viaje creado con exito", this.empresa.getViajeDeCliente(c1) != null);
 		}
 		catch(excepciones.PedidoInexistenteException e){
-			fail(e.getMessage());
+			fail("No deberia lanzar PedidoInexistenteException");
 		
 		}
 		catch(excepciones.ChoferNoDisponibleException e){
-			fail(e.getMessage());
+			fail("No deberia lanzar ChoferNoDisponibleException");
 		}
 		catch(excepciones.VehiculoNoDisponibleException e){
-			fail(e.getMessage());
+			fail("No deberia lanzar VehiculoNoDisponibleException");
+		}
+		catch(excepciones.VehiculoNoValidoException e){
+			fail("No deberia lanzar VehiculoNoValidoException");
+		}
+		catch(excepciones.ClienteConViajePendienteException e){
+			fail("No deberia lanzar ClienteConViajePendienteException");
+				
+		}
+	}
+	
+	@Test
+	public void testcrearViaje_VehiculoNoValido(){
+		Cliente c1 = this.empresa.getClientes().get("Usuario1");
+		Pedido pedido= this.empresa.getPedidoDeCliente(c1);
+		Chofer chofer= this.empresa.getChoferesDesocupados().get(0);
+		Vehiculo vehiculo=this.empresa.getVehiculosDesocupados().get(1);
+		try{
+			this.empresa.crearViaje(pedido, chofer, vehiculo);
+			fail("Deberia lanzar VehiculoNoValidoException");
+		}
+		catch(excepciones.PedidoInexistenteException e){
+			fail("No deberia lanzar PedidoInexistenteException");
+		
+		}
+		catch(excepciones.ChoferNoDisponibleException e){
+			fail("No deberia lanzar ChoferNoDisponibleException");
+		}
+		catch(excepciones.VehiculoNoDisponibleException e){
+			fail("No deberia lanzar VehiculoNoDisponibleException");
+		}
+		catch(excepciones.VehiculoNoValidoException e){
+			assertEquals(Mensajes.VEHICULO_NO_VALIDO.getValor(), Mensajes.VEHICULO_NO_VALIDO.getValor(), e.getMessage());
+			assertEquals("Almacena mal el vehiculo no valido",e.getVehiculo(),vehiculo);
+			assertEquals("Almacena mal el pedido asociado al vehiculo no valido",e.getPedido(),pedido);
+			
+		}
+		catch(excepciones.ClienteConViajePendienteException e){
+			fail("No deberia lanzar ClienteConViajePendienteException");
+				
+		}
+	}
+	
+	@Test
+	public void testcrearViaje_VehiculoNoDisponible(){
+		Cliente c1 = this.empresa.getClientes().get("Usuario1");
+		Cliente c2 = this.empresa.getClientes().get("Usuario2");
+		
+		Pedido pedido= this.empresa.getPedidoDeCliente(c1);
+		Pedido pedido2 = new Pedido(c2, 4, false, false, 1, Constantes.ZONA_STANDARD);
+		Chofer chofer1= this.empresa.getChoferesDesocupados().get(0);
+		Chofer chofer2 = this.empresa.getChoferesDesocupados().get(1);
+		Vehiculo vehiculo=this.empresa.getVehiculosDesocupados().get(0);
+		
+		try{
+			this.empresa.crearViaje(pedido, chofer1, vehiculo);
+			this.empresa.agregarPedido(pedido2);
+			
+			this.empresa.crearViaje(pedido2, chofer2, vehiculo);
+			fail("Deberia lanzar VehiculoNoDisponibleException");
+		}
+		catch(excepciones.PedidoInexistenteException e){
+			fail("No deberia lanzar PedidoInexistenteException");
+		}
+		catch(excepciones.ChoferNoDisponibleException e){
+			fail("No deberia lanzar ChoferNoDisponibleException");
+		}
+		catch(excepciones.VehiculoNoDisponibleException e){
+			assertEquals("Debio lanzar "+Mensajes.VEHICULO_NO_DISPONIBLE.getValor(), Mensajes.VEHICULO_NO_DISPONIBLE.getValor(), e.getMessage());
+			assertEquals("Almacena mal el vehiculo no disponible",e.getVehiculo(),vehiculo);
+			}
+		catch(excepciones.VehiculoNoValidoException e){
+			fail("No deberia lanzar VehiculoNoValidoException");
+		}
+		catch(excepciones.ClienteConViajePendienteException e){
+			fail("No deberia lanzar ClienteConViajePendienteException");
+				
+		}
+		catch(Exception e){
+			fail("Excepcion externa al metodo: " + e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testcrearViaje_ClienteConViajePendiente(){
+		Cliente c1 = this.empresa.getClientes().get("Usuario1");
+		
+		Pedido pedido= this.empresa.getPedidoDeCliente(c1);
+		Pedido pedido2 = new Pedido(c1, 1, false, false, 1, Constantes.ZONA_STANDARD);
+		
+		Chofer chofer1= this.empresa.getChoferesDesocupados().get(1);
+		
+		Vehiculo vehiculo=this.empresa.getVehiculosDesocupados().get(0);
+		
+		try{
+			this.empresa.crearViaje(pedido, chofer1, vehiculo);
+			this.empresa.agregarPedido(pedido2);
+			fail("Deberia lanzar VehiculoNoDisponibleException");
+		}
+		catch(excepciones.PedidoInexistenteException e){
+			fail("No deberia lanzar PedidoInexistenteException");
+		}
+		catch(excepciones.ChoferNoDisponibleException e){
+			fail("No deberia lanzar ChoferNoDisponibleException");
+		}
+		catch(excepciones.VehiculoNoDisponibleException e){
+			fail("No deberia lanzar VehiculoNoDisponibleException");
 		}
 		catch(excepciones.VehiculoNoValidoException e){
 			fail(e.getMessage());
 		}
 		catch(excepciones.ClienteConViajePendienteException e){
-			fail(e.getMessage());
+			assertEquals(Mensajes.CLIENTE_CON_VIAJE_PENDIENTE.getValor(), Mensajes.CLIENTE_CON_VIAJE_PENDIENTE.getValor(), e.getMessage());
 				
 		}
+		catch(Exception e){
+			fail("Excepcion externa al metodo: " + e.getMessage());
+		}
+		//Error heredado de clienteViajePendiente
 	}
 
 	//--------------------- Tests vacíos para completar ---------------------//
@@ -172,7 +296,8 @@ public class Escenario3 {
 			 
 		 }
 		 catch(excepciones.ClienteSinViajePendienteException e) {
-			 assertTrue(Mensajes.CLIENTE_SIN_VIAJE_PENDIENTE.getValor(), null == this.empresa.getViajeDeCliente((Cliente) this.empresa.getUsuarioLogeado()));
+			 assertEquals(Mensajes.CLIENTE_SIN_VIAJE_PENDIENTE.getValor(), Mensajes.CLIENTE_SIN_VIAJE_PENDIENTE.getValor(), e.getMessage());
+			 
 			 
 		 }
 		 

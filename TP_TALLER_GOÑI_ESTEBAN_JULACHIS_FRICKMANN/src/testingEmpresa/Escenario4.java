@@ -77,7 +77,7 @@ public class Escenario4 {
 	
 	
 	@Test
-	public void testAgregarPedidoSobrante() {
+	public void testAgregar_ClienteViajePendiente() {
 	Cliente cliente= this.empresa.getClientes().get("Usuario1");
 	Pedido pedido=new Pedido(cliente, 4, false, false, 1, Constantes.ZONA_STANDARD);
   try {
@@ -85,22 +85,24 @@ public class Escenario4 {
 	fail("Debería lanzar ClienteConPedidoPendienteException");	
 	}
 	catch(excepciones.ClienteNoExisteException e) {
-		fail(e.getMessage());
+		fail("No debería lanzar ClienteNoExisteException");
 	}
 	catch(excepciones.ClienteConViajePendienteException e) {
-		fail(e.getMessage());
+		fail("No debería lanzar ClienteConViajePendienteException");
 	}
 	catch(excepciones.ClienteConPedidoPendienteException e) {
-		assertTrue(Mensajes.CLIENTE_CON_PEDIDO_PENDIENTE.getValor(), this.empresa.getPedidoDeCliente(cliente) != null );
+		assertEquals("Debería lanzar el siguiente mensaje: "+Mensajes.CLIENTE_CON_PEDIDO_PENDIENTE.getValor(),
+				Mensajes.CLIENTE_CON_PEDIDO_PENDIENTE.getValor(), e.getMessage());
+		
 	}
 	catch(excepciones.SinVehiculoParaPedidoException e) {
-		fail(e.getMessage());
+		fail("No debería lanzar SinVehiculoParaPedidoException");
 	}
 	
 }
 
 	@Test 
-	public void testcalificacionDeChofer(){
+	public void testcalificacionDeChofer_casoBase(){
 		try{
 			this.empresa.login("Usuario2", "12345677");
 			this.empresa.pagarYFinalizarViaje(4);
@@ -109,16 +111,16 @@ public class Escenario4 {
 			assertTrue("Cálculo correcto", calificaciones == this.empresa.getViajesTerminados().get(0).getCalificacion()/this.empresa.getViajesTerminados().size());
 		}
 		catch(excepciones.SinViajesException e){
-			fail(e.getMessage());
+			fail("No deberia lanzar SinViajesException");
 		}
 		catch(Exception e) {
-			fail(e.getMessage());
+			fail("No deberia lanzar ninguna excepcion: ");
 		}
 	}
 	@Test 
 	public void testcalificacionDeChofer_sin_viajes() {
 		try{
-			Chofer chofer = new ChoferPermanente("33333","nombreRealChofer1",2020,4);
+			Chofer chofer = new ChoferPermanente("33333","nombreRealChofer3",2020,4);
     		this.empresa.agregarChofer(chofer); //Chofer nuevo
 			double calificaciones = this.empresa.calificacionDeChofer(chofer);
 			
@@ -129,12 +131,12 @@ public class Escenario4 {
 			assertEquals("Debio lanzar el siguiente mensaje"+ Mensajes.CHOFER_SIN_VIAJES.getValor(),Mensajes.CHOFER_SIN_VIAJES.getValor(), e.getMessage());
 		}
 		catch(Exception e) {
-			fail(e.getMessage());
+			fail("No deberia lanzar ninguna otra excepcion");
 		}
 		
 	}
     @Test
-    public void testCrearViaje() {
+    public void testCrearViaje_ChoferNoDisponible() {
     	Chofer chofer = new ChoferPermanente("33333","nombreRealChofer1",2020,4);
     	try {
     		this.empresa.agregarChofer(chofer); //Chofer nuevo 

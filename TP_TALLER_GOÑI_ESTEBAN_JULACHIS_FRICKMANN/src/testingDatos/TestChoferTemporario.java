@@ -6,9 +6,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import modeloDatos.ChoferPermanente;
+
 import modeloDatos.ChoferTemporario;
-import util.Constantes;
+
 
 public class TestChoferTemporario {
 
