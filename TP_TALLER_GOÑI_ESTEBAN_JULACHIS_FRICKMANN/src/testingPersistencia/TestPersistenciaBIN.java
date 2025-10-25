@@ -56,9 +56,12 @@ public class TestPersistenciaBIN {
 			this.pbin.abrirInput("archivo_que_no_existe.bin");
 			fail("deberia lanzar exepcion por archivo inexistente");
 		}
-		catch(Exception e) {
-			assertTrue("El archivo no existe",true);
+		catch(IOException e) {
+			assertTrue(e.getMessage(),true); //dudoso
 			
+		}
+		catch(Exception e) {
+			fail("deberia lanzar IOException");
 		}
 	}
 	
@@ -66,11 +69,14 @@ public class TestPersistenciaBIN {
 	public void testLectura_ArchivoNull() {
 		try {
 			this.pbin.abrirInput(null);
-			fail("deberia lanzar exepcion por archivo inexistente");
+			fail("Deberia lanzar IOException por archivo nulo"); 
+		}
+		catch(IOException e) {
+			assertTrue(e.getMessage(),true); 
+			
 		}
 		catch(Exception e) {
-			assertTrue("El archivo no existe",true);
-			
+			fail("deberia lanzar IOException");
 		}
 	}
 	
