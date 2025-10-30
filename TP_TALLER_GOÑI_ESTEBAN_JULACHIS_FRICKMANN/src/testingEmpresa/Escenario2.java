@@ -93,8 +93,9 @@ public class Escenario2 {
 	@Test
 	public void testLoginPassIncorrecta() {
 		try {
+			this.empresa.logout();
 			
-			this.empresa.login("Usuario1", "contraseñamala"); 
+			this.empresa.login("admin", "contraseñamala"); 
 			fail("Deberia haber saltado excepción");
 		}
 		catch (excepciones.PasswordErroneaException e) {
