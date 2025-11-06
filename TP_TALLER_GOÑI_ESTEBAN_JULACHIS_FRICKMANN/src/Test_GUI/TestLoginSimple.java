@@ -13,6 +13,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import Test_GUI.TestUtil;
+import Test_GUI.FalsoOptionPane;
+
 import java.awt.Robot;
 import java.awt.AWTException;
 import java.awt.Component;
@@ -26,8 +29,11 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.JTextField;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import modeloNegocio.Empresa;
 import excepciones.UsuarioNoExisteException;
+import modeloDatos.Administrador;
+import vista.*;
 public class TestLoginSimple {
 	Robot robot;
 	Controlador controlador;
@@ -60,13 +66,11 @@ public class TestLoginSimple {
 	public void testSoloNombre() {
 		robot.delay(this.delay);
 		JTextField nombre = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NOMBRE_USUARIO);
-		JButton aceptarReg = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REGISTRAR);
 		JButton aceptarLog = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LOGIN);
 		
 		TestUtil.clickComponent(nombre, robot);
 		TestUtil.tipeaTexto("hola", robot);
 		
-		Assert.assertFalse("El boton de registro deberia estar deshabilitado", aceptarReg.isEnabled());
 		Assert.assertFalse("El boton de login deberia estar deshabilitado", aceptarLog.isEnabled());
 		
 	}
@@ -75,13 +79,11 @@ public class TestLoginSimple {
 	public void testSoloContraseña() {
 		robot.delay(this.delay);
 		JTextField pass = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PASSWORD);
-		JButton aceptarReg = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REGISTRAR);
 		JButton aceptarLog = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LOGIN);
 		
 		TestUtil.clickComponent(pass, robot);
 		TestUtil.tipeaTexto("123456", robot);
 		
-		Assert.assertFalse("El boton de registro deberia estar deshabilitado", aceptarReg.isEnabled());
 		Assert.assertFalse("El boton de login deberia estar deshabilitado", aceptarLog.isEnabled());
 		
 	}
@@ -91,7 +93,6 @@ public class TestLoginSimple {
 		robot.delay(this.delay);
 		JTextField nombre = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NOMBRE_USUARIO);
 		JTextField pass = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PASSWORD);
-		JButton aceptarReg = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REGISTRAR);
 		JButton aceptarLog = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LOGIN);
 		
 		TestUtil.clickComponent(pass, robot);
@@ -101,8 +102,6 @@ public class TestLoginSimple {
 		TestUtil.clickComponent(nombre, robot);
 		TestUtil.tipeaTexto("Nombre", robot);
 		
-		
-		Assert.assertTrue("El boton de registro deberia estar habilitado", aceptarReg.isEnabled());
 		Assert.assertTrue("El boton de login deberia estar habilitado", aceptarLog.isEnabled());
 	}
 	@Test
@@ -110,7 +109,6 @@ public class TestLoginSimple {
 		robot.delay(this.delay);
 		JTextField nombre = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NOMBRE_USUARIO);
 		JTextField pass = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PASSWORD);
-		JButton aceptarReg = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REGISTRAR);
 		JButton aceptarLog = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LOGIN);
 		
 		TestUtil.clickComponent(pass, robot);
@@ -122,8 +120,7 @@ public class TestLoginSimple {
 		robot.delay(this.delay);
 		
 		TestUtil.clickComponent(aceptarLog, robot);
-		Assert.assertTrue(Mensajes.USUARIO_DESCONOCIDO.getValor(), true);
-		//Aca quiero hacer true si se abre la ventana que se tiene que abrir
+		Assert.assertTrue(Mensajes.USUARIO_DESCONOCIDO.getValor(), op.getMensaje().equals(Mensajes.USUARIO_DESCONOCIDO.getValor()));
 	}
 	
 	@Test
@@ -135,7 +132,6 @@ public class TestLoginSimple {
 		robot.delay(this.delay);
 		JTextField nombre = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NOMBRE_USUARIO);
 		JTextField pass = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PASSWORD);
-		JButton aceptarReg = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REGISTRAR);
 		JButton aceptarLog = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LOGIN);
 		
 		TestUtil.clickComponent(pass, robot);
@@ -147,9 +143,29 @@ public class TestLoginSimple {
 		robot.delay(this.delay);
 		
 		TestUtil.clickComponent(aceptarLog, robot);
-		Assert.assertTrue(Mensajes.USUARIO_DESCONOCIDO.getValor(), true);
-		//Aca lo mismo pero con otra ventana
+		
+		PanelCliente clientPane = (vista.PanelCliente) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PANEL_CLIENTE);
+		Assert.assertTrue("Usuario logeado con exíto",clientPane != null && clientPane.isVisible());
 		
 		
+	}
+	@Test
+	public void testLoginCorrectoAdmin() {
+		robot.delay(this.delay);
+		JTextField nombre = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NOMBRE_USUARIO);
+		JTextField pass = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PASSWORD);
+		JButton aceptarLog = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LOGIN);
+		
+		TestUtil.clickComponent(pass, robot);
+		TestUtil.tipeaTexto("admin", robot);
+		robot.delay(this.delay);
+		
+		TestUtil.clickComponent(nombre, robot);
+		TestUtil.tipeaTexto("admin", robot);
+		robot.delay(this.delay);
+		
+		TestUtil.clickComponent(aceptarLog, robot);
+		PanelAdmin adminPane = (vista.PanelAdmin) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PANEL_ADMINISTRADOR);
+		Assert.assertTrue(Mensajes.USUARIO_DESCONOCIDO.getValor(), adminPane != null && adminPane.isVisible());		
 	}
 }

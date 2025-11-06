@@ -12,6 +12,7 @@ import java.awt.AWTException;
 import java.awt.Component;
 
 import controlador.Controlador;
+import modeloDatos.Administrador;
 import modeloNegocio.Empresa;
 import util.Constantes;
 import util.Mensajes;
@@ -20,7 +21,8 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.JTextField;
 import javax.swing.JButton;
-
+import javax.swing.JOptionPane;
+import vista.*;
 
 public class testRegister {
 	Robot robot;
@@ -28,20 +30,27 @@ public class testRegister {
 	FalsoOptionPane op = new FalsoOptionPane();
 	int delay = TestUtil.getDelay();
 	
+	
+	
+	public testRegister() {
+		try {
+			robot = new Robot();
+		} catch (AWTException e) {
+			e.printStackTrace();
+		}
+	}
 	@Before
 	public void setUp() throws Exception {
+		controlador = new Controlador();
+		controlador.getVista().setOptionPane(op);
 	}
 
 	@After
 	public void tearDown() throws Exception {
 	}
 
+	
 	@Test
-	public void test() {
-		fail("Not yet implemented");
-	}
-	
-	
 	public void registro() {
 		robot.delay(this.delay);
 		
@@ -54,7 +63,8 @@ public class testRegister {
 		JButton canButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REG_BUTTON_CANCELAR);
 		
 		TestUtil.clickComponent(regButton, robot);
-		regButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REGISTRAR);
+		PanelRegistro regPane = (vista.PanelRegistro) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PANEL_REGISTRO);
+		assertTrue("Deberia abrirse el panel registro", regPane != null && regPane.isVisible());
 		robot.delay(this.delay);
 		
 		
