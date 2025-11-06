@@ -2,24 +2,22 @@ package Test_GUI;
 
 import static org.junit.Assert.*;
 
+import java.awt.Robot;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.awt.Robot;
-import java.awt.AWTException;
+import controlador.Controlador;
 
-
-public class TestingGUI {
+public class TestAdmin {
 	Robot robot;
+	Controlador controlador;
+	FalsoOptionPane op = new FalsoOptionPane();
+	int delay = TestUtil.getDelay();
+
 	@Before
 	public void setUp() throws Exception {
-		try {
-			robot = new Robot();
-		} catch (AWTException e) {
-			e.printStackTrace();
-		}
-		
 	}
 
 	@After

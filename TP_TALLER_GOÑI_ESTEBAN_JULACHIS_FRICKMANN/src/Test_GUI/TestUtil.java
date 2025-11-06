@@ -60,24 +60,6 @@ public class TestUtil {
         robot.mouseRelease(InputEvent.BUTTON1_MASK);
         robot.delay(getDelay());
     }
-
-    
-    /*public static void tipeaTexto(String texto, Robot robot) {
-        String mayusculas = texto.toUpperCase();
-        char letras[] = mayusculas.toCharArray();
-        for (int i = 0; i < letras.length; i++)
-        {
-            robot.delay(getDelay());
-            if (texto.charAt(i) >= 'A' && texto.charAt(i) <= 'Z')
-                robot.keyPress(KeyEvent.VK_SHIFT);
-            robot.keyPress(letras[i]);
-            robot.delay(getDelay());
-            robot.keyRelease(letras[i]);
-            if (texto.charAt(i) >= 'A' && texto.charAt(i) <= 'Z')
-                robot.keyRelease(KeyEvent.VK_SHIFT);
-
-        }
-    }*/
     
     public static int getKeyCode(char c) {
         switch (c) {
@@ -131,42 +113,7 @@ public class TestUtil {
         }
     }
 
-    
-    /*public static void tipeaTexto(String texto, Robot robot) {
-        char letras[] = texto.toCharArray();
-        for (int i = 0; i < letras.length; i++)
-        {
-            robot.delay(getDelay());
-            char c = letras[i];
-            int keyCode = getKeyCode(c);
 
-            if (c >= 'A' && c <= 'Z')
-                robot.keyPress(KeyEvent.VK_SHIFT);
-            else if (c == '@') {
-                robot.keyPress(KeyEvent.VK_SHIFT);    
-                robot.keyPress(KeyEvent.VK_2);     
-            }
-            else if (c == '_') {
-            	robot.keyPress(KeyEvent.VK_SHIFT);
-            	robot.keyPress(KeyEvent.VK_MINUS);
-            }
-            
-            robot.keyPress(letras[i]);
-            robot.delay(getDelay());
-            robot.keyRelease(letras[i]);
-            
-            if (c >= 'A' && c <= 'Z')
-                robot.keyRelease(KeyEvent.VK_SHIFT);
-            else if (c == '@') {        
-                robot.keyRelease(KeyEvent.VK_2);       
-                robot.keyRelease(KeyEvent.VK_SHIFT);  
-                }
-            else if (c == '_') {
-            	robot.keyRelease(KeyEvent.VK_SHIFT);
-            	robot.keyRelease(KeyEvent.VK_MINUS);
-            }
-        }
-    }*/
     
     public static void tipeaTexto(String texto, Robot robot) {
         String mayusculas = texto.toUpperCase();
