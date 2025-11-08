@@ -30,6 +30,8 @@ import java.awt.event.KeyEvent;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
 import modeloNegocio.Empresa;
 import excepciones.UsuarioNoExisteException;
 import modeloDatos.Administrador;
@@ -144,7 +146,7 @@ public class TestLoginSimple {
 		
 		TestUtil.clickComponent(aceptarLog, robot);
 		
-		PanelCliente clientPane = (vista.PanelCliente) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PANEL_CLIENTE);
+		JPanel clientPane = (JPanel) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PANEL_CLIENTE);
 		Assert.assertTrue("Usuario logeado con exíto",clientPane != null && clientPane.isVisible());
 		
 		
@@ -165,7 +167,7 @@ public class TestLoginSimple {
 		robot.delay(this.delay);
 		
 		TestUtil.clickComponent(aceptarLog, robot);
-		PanelAdmin adminPane = (vista.PanelAdmin) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PANEL_ADMINISTRADOR);
+		JPanel adminPane = (JPanel) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PANEL_ADMINISTRADOR);
 		Assert.assertTrue(Mensajes.USUARIO_DESCONOCIDO.getValor(), adminPane != null && adminPane.isVisible());		
 	}
 }
