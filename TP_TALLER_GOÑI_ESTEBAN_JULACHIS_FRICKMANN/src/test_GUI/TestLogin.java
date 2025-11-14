@@ -1,10 +1,4 @@
-package Test_GUI;
-
-// O: Simple es por que no se va a logear a ningun usuario en este Test
-
-
-
-
+package test_GUI;
 
 import static org.junit.Assert.*;
 
@@ -13,15 +7,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import Test_GUI.TestUtil;
-import Test_GUI.FalsoOptionPane;
-
 import java.awt.Robot;
 import java.awt.AWTException;
 import java.awt.Component;
 
 import controlador.Controlador;
 import modeloNegocio.Empresa;
+import test_GUI.FalsoOptionPane;
+import test_GUI.TestUtil;
 import util.Constantes;
 import util.Mensajes;
 
@@ -36,7 +29,7 @@ import modeloNegocio.Empresa;
 import excepciones.UsuarioNoExisteException;
 import modeloDatos.Administrador;
 import vista.*;
-public class TestLoginSimple {
+public class TestLogin {
 	Robot robot;
 	Controlador controlador;
 	FalsoOptionPane op = new FalsoOptionPane();
@@ -44,7 +37,7 @@ public class TestLoginSimple {
 	Empresa empresa = Empresa.getInstance();
 	
 	
-	public TestLoginSimple() {
+	public TestLogin() {
 		try {
 			robot = new Robot();
 		} catch (AWTException e) {
@@ -62,7 +55,6 @@ public class TestLoginSimple {
 	@After
 	public void tearDown() throws Exception {
 	}
-	
 	
 	@Test
 	public void testSoloNombre() {
@@ -106,6 +98,7 @@ public class TestLoginSimple {
 		
 		Assert.assertTrue("El boton de login deberia estar habilitado", aceptarLog.isEnabled());
 	}
+	
 	@Test
 	public void testLoginFallido() {
 		robot.delay(this.delay);
@@ -151,6 +144,7 @@ public class TestLoginSimple {
 		
 		
 	}
+	
 	@Test
 	public void testLoginCorrectoAdmin() {
 		robot.delay(this.delay);
@@ -169,5 +163,34 @@ public class TestLoginSimple {
 		TestUtil.clickComponent(aceptarLog, robot);
 		JPanel adminPane = (JPanel) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PANEL_ADMINISTRADOR);
 		Assert.assertTrue(Mensajes.USUARIO_DESCONOCIDO.getValor(), adminPane != null && adminPane.isVisible());		
+	}
+	
+	@Test
+	public void testLoginVacios() {
+		
+		robot.delay(this.delay);
+		
+		JButton regButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REGISTRAR);
+		
+		TestUtil.clickComponent(regButton, robot);
+		robot.delay(this.delay);
+		
+		
+		JTextField regNomText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REG_USSER_NAME);
+		TestUtil.clickComponent(regNomText, robot);
+		TestUtil.tipeaTexto("Text", robot);//Texto creado para testear que vuelve vacio
+		robot.delay(this.delay);
+		
+		JButton cancButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REG_BUTTON_CANCELAR);
+		
+		TestUtil.clickComponent(cancButton, robot);
+		robot.delay(this.delay);
+		
+		JTextField nombre = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NOMBRE_USUARIO);
+		JTextField pass = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PASSWORD);
+		JButton aceptarLog = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LOGIN);
+		
+		boolean bool = nombre.getText().isEmpty() && pass.getText().isEmpty() && !aceptarLog.isEnabled();
+		Assert.assertTrue("Los campos de login estan vacios y el boton deshabilitado", bool);
 	}
 }

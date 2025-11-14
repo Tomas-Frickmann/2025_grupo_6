@@ -1,4 +1,4 @@
-package Test_GUI;
+package test_GUI;
 
 import static org.junit.Assert.*;
 
@@ -26,7 +26,7 @@ import javax.swing.JPanel;
 import vista.*;
 import modeloNegocio.Empresa;
 
-public class testRegister {
+public class TestRegister {
 	Robot robot;
 	Controlador controlador;
 	FalsoOptionPane op = new FalsoOptionPane();
@@ -36,22 +36,26 @@ public class testRegister {
 	
 	
 	
-	public testRegister() {
+	public TestRegister() {
 		try {
 			robot = new Robot();
 		} catch (AWTException e) {
 			e.printStackTrace();
 		}
 	}
+	
 	@Before
 	public void setUp() throws Exception {
 		controlador = new Controlador();
 		controlador.getVista().setOptionPane(op);
 		
+		
 		robot.delay(this.delay);
 		JButton regButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REGISTRAR);
+		
 		TestUtil.clickComponent(regButton, robot);
 		robot.delay(this.delay);
+		
 		
 	}
 
@@ -305,7 +309,38 @@ public class testRegister {
 		
 		JPanel logPane = (JPanel) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PANEL_LOGIN);
 		assertTrue("Deberia volver al panel de login", logPane.isVisible());
-
+	}
+	
+	@Test
+	public void LoginVacio() {
+		robot.delay(this.delay);
+		
+		JButton canButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REG_BUTTON_CANCELAR);
+		TestUtil.clickComponent(canButton, robot);
+		
+		robot.delay(this.delay);
+		JButton regButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REGISTRAR);
+		JTextField nomText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NOMBRE_USUARIO);
+		
+		TestUtil.clickComponent(nomText, robot);
+		TestUtil.tipeaTexto("Text", robot);
+		robot.delay(this.delay);
+		
+		TestUtil.clickComponent(regButton, robot);
+		robot.delay(this.delay);
+		
+		
+		nomText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REG_USSER_NAME);
+		JTextField passText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REG_PASSWORD);
+		JTextField passTextAgain = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REG_CONFIRM_PASSWORD);
+		JTextField realText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REG_REAL_NAME);
+		canButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REG_BUTTON_CANCELAR);
+		
+		boolean bool = nomText.getText().isEmpty() && passText.getText().isEmpty() && passTextAgain.getText().isEmpty() && realText.getText().isEmpty() && canButton.isEnabled();
+		
+		assertTrue("Todos los campos deberian estar vacios y el boton de cancelar habilitado", bool);
+		
 		
 	}
+
 }

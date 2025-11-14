@@ -1,4 +1,4 @@
-package Test_GUI;
+package test_GUI;
 
 import java.awt.Component;
 import java.awt.Container;
