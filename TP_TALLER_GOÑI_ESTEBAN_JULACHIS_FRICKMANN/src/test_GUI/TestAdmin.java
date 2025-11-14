@@ -25,6 +25,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import vista.*;
 import modeloNegocio.Empresa;
+
 public class TestAdmin {
 	Robot robot;
 	Controlador controlador;
@@ -70,7 +71,7 @@ public class TestAdmin {
 	}
 
 	@Test
-	public void testVentanaCorrecta() {
+	public void testVentanaCorrecta() { //Se fija que la ventana de administrador se haya abierto correctamente
 		assertTrue("",true);
 		
 	}
