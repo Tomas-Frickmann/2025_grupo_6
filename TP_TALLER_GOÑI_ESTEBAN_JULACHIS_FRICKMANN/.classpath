@@ -9,10 +9,9 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="SubiQueTeLlevo_v2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mockito-core-4.11.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/GitHub/TP_TALLER/TP_TALLER_GOÑI_ESTEBAN_JULACHIS_FRICKMANN/lib/byte-buddy-1.12.21.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/GitHub/TP_TALLER/TP_TALLER_GOÑI_ESTEBAN_JULACHIS_FRICKMANN/lib/byte-buddy-agent-1.12.21.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/GitHub/TP_TALLER/TP_TALLER_GOÑI_ESTEBAN_JULACHIS_FRICKMANN/lib/jmockit-1.49.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/GitHub/TP_TALLER/TP_TALLER_GOÑI_ESTEBAN_JULACHIS_FRICKMANN/lib/mockito-core-4.11.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/GitHub/TP_TALLER/TP_TALLER_GOÑI_ESTEBAN_JULACHIS_FRICKMANN/lib/objenesis-3.3.jar"/>
+	<classpathentry kind="lib" path="lib/byte-buddy-1.12.21.jar"/>
+	<classpathentry kind="lib" path="lib/byte-buddy-agent-1.12.21.jar"/>
+	<classpathentry kind="lib" path="lib/jmockit-1.49.jar"/>
+	<classpathentry kind="lib" path="lib/objenesis-3.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
