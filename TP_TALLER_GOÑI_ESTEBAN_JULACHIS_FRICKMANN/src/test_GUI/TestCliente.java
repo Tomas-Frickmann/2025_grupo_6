@@ -557,6 +557,7 @@ public class TestCliente {
 		assertTrue("El pedido no es el mismo", verificarLista(this.empresa.getHistorialViajeCliente(this.empresa.getClientes().get(this.usuario)),historArea));
 		
 	}
+	
 	public boolean verificarLista(ArrayList<Viaje> viajesCorrectos, JList<Viaje> historArea) {
 
 	    // 1. Obtener el modelo de la JList
