@@ -1,5 +1,4 @@
 package test_GUI;
-
 import static org.junit.Assert.*;
 
 import org.junit.After;
@@ -42,7 +41,6 @@ public class TestCliente {
 	String nombreReal = "NombreReal";
 
 	Empresa empresa = Empresa.getInstance();
-	Ventana ventana;
 	
 	public TestCliente(){
 		try {
@@ -55,44 +53,47 @@ public class TestCliente {
 
 	@Before
 	public void setUp() throws Exception {
-		this.ventana = new Ventana();
-		this.ventana.setOptionPane(op);
+		
 		controlador = new Controlador();
-		controlador.setVista(this.ventana);
-		this.ventana.setVisible(true);
-		
-		robot.delay(this.delay);
-		
+		controlador.getVista().setOptionPane(op);
 		
 	}
 
-	@After
-	public void tearDown() throws Exception {
-		ventana.setVisible(false);
-	}
-	
 	public void setUpEscenario() {
+		//
 		try {
 			this.empresa.agregarCliente(this.usuario, this.pass, this.nombreReal);
 		} catch (UsuarioYaExisteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		System.out.println(this.controlador.toString());
 		JTextField nombre = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NOMBRE_USUARIO);
 		JTextField pass = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PASSWORD);
 		JButton aceptarLog = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LOGIN);
 		
-		TestUtil.clickComponent(pass, robot);
-		TestUtil.tipeaTexto(this.pass, robot);
-		robot.delay(this.delay);
+		
 		
 		TestUtil.clickComponent(nombre, robot);
 		TestUtil.tipeaTexto(this.usuario, robot);
 		robot.delay(this.delay);
 		
-		TestUtil.clickComponent(aceptarLog, robot);
+		TestUtil.clickComponent(pass, robot);
+		TestUtil.tipeaTexto(this.pass, robot);
+		robot.delay(this.delay);
 		
+		TestUtil.clickComponent(aceptarLog, robot);
+		System.out.println(this.controlador.toString());
+		
+		robot.delay(this.delay);
 	}
+	
+	@After
+	public void tearDown() throws Exception {
+	}
+	
+	
 	
 	@Test
 	public void testCerrarSesionHab() {
@@ -114,15 +115,13 @@ public class TestCliente {
 	@Test
 	public void testVuelveLogin() {
 		this.setUpEscenario();
-		robot.delay(this.delay);
-		
 		JButton closeButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CERRAR_SESION_CLIENTE);
-		
 		
 		TestUtil.clickComponent(closeButton, robot);
 		robot.delay(this.delay);
 		
 		JPanel loginPane = (JPanel) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PANEL_LOGIN);
+		
 		assertTrue("La ventana final no es la correcta",loginPane != null && loginPane.isVisible());	
 	}
 	
