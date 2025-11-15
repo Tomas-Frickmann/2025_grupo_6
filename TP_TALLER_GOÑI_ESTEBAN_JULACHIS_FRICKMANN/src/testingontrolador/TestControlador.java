@@ -7,7 +7,6 @@ import static org.mockito.Mockito.*;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Field;
 
-import mockit.Mocked;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -35,38 +34,36 @@ import vista.Ventana;
 
 public class TestControlador {
 
-    @Mocked
-    private Ventana ventanaMock;
 
+    private Ventana ventanaMock;
     private Controlador controlador;
     private IVista vistaMock;
     private IPersistencia persistenciaMock;
     private Empresa empresaMock;
     private IOptionPane optionPaneMock;
 
-    @BeforeClass
-    public static void setUpHeadless() {
-        System.setProperty("java.awt.headless", "true");
-    }
-
     @Before
     public void setUp() throws Exception {
+
+        // Crear Controlador SIN ejecutar constructor
+        controlador = mock(Controlador.class, CALLS_REAL_METHODS);
+
+        // Crear dependencias
         vistaMock = mock(IVista.class);
         persistenciaMock = mock(IPersistencia.class);
         empresaMock = mock(Empresa.class);
         optionPaneMock = mock(IOptionPane.class);
 
-        when(vistaMock.getOptionPane()).thenReturn(optionPaneMock);
-
-        Field instancia = Empresa.class.getDeclaredField("instance");
-        instancia.setAccessible(true);
-        instancia.set(null, empresaMock);
-
-        controlador = new Controlador();
+        // Injectar mocks
         controlador.setVista(vistaMock);
         controlador.setPersistencia(persistenciaMock);
-    }
+        when(vistaMock.getOptionPane()).thenReturn(optionPaneMock);
 
+        // Injectar singleton Empresa
+        Field f = Empresa.class.getDeclaredField("instance");
+        f.setAccessible(true);
+        f.set(null, empresaMock);
+    }
     @Test
     public void testConstructor() {
         Controlador c = new Controlador();
