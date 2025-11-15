@@ -17,6 +17,7 @@ import excepciones.ClienteConViajePendienteException;
 import excepciones.ClienteNoExisteException;
 import excepciones.PedidoInexistenteException;
 import excepciones.SinVehiculoParaPedidoException;
+import excepciones.SinViajesException;
 import excepciones.UsuarioYaExisteException;
 import excepciones.VehiculoNoDisponibleException;
 import excepciones.VehiculoNoValidoException;
@@ -27,12 +28,14 @@ import modeloDatos.ChoferTemporario;
 import modeloDatos.Cliente;
 import modeloDatos.Moto;
 import modeloDatos.Pedido;
+import modeloDatos.Viaje;
 import modeloNegocio.Empresa;
 import util.Constantes;
 import util.Mensajes;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.JTextField;
@@ -61,7 +64,7 @@ public class TestCliente {
 	String nombreReal = "NombreReal";
 	ChoferPermanente choferPermanente;
 	Auto auto;
-	Empresa empresa;
+	Empresa empresa = Empresa.getInstance();
 	Pedido pedido;
 	
 	public TestCliente(){
@@ -75,44 +78,41 @@ public class TestCliente {
 
 	@Before
 	public void setUp() throws Exception {
-		this.empresa = Empresa.getInstance();
-		this.empresa.setClientes(new HashMap<String, modeloDatos.Cliente>());
 		
 		
 		controlador = new Controlador();
 		controlador.getVista().setOptionPane(op);
 		
-		try {
-			this.empresa.agregarCliente(this.usuario, this.pass, this.nombreReal);
-		} catch (UsuarioYaExisteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		this.buildEscenario();
 	}
 
 	
 	@After
 	public void tearDown() throws Exception {
-		this.empresa = null;
+		this.empresa.getClientes().clear();
+		this.empresa.getChoferes().clear();
+		this.empresa.getVehiculos().clear();
 	}
 	
 	//Escenario derivado del 3
 	public void buildEscenario() {
 		try {
+			this.empresa.agregarCliente(this.usuario, this.pass, this.nombreReal);
 			this.choferPermanente = new ChoferPermanente("11111111","nombreRealChofer1",2020,4);
 			this.empresa.agregarChofer(this.choferPermanente);
 			this.auto = new Auto("AAA111",4,false);
 			this.empresa.agregarVehiculo(this.auto);
 			this.pedido = new Pedido(this.empresa.getClientes().get("Usuario1"), 4, false, false, 1, Constantes.ZONA_STANDARD);
+			this.empresa.agregarPedido(this.pedido);
+			
+			this.empresa.crearViaje(this.pedido, choferPermanente, auto);
 		}
 		catch(Exception e) {
-			System.out.println("Problemas en el escenario");
+			System.out.println("Problemas en el escenario" + e.getMessage());
 		}
 	}
 	
 	public void logeaVentana(String user,String password) {
-		System.out.println(this.controlador.toString());
 		JTextField nombre = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NOMBRE_USUARIO);
 		JTextField pass = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PASSWORD);
 		JButton aceptarLog = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LOGIN);
@@ -128,7 +128,6 @@ public class TestCliente {
 		robot.delay(this.delay);
 		
 		TestUtil.clickComponent(aceptarLog, robot);
-		System.out.println(this.controlador.toString());
 		
 		robot.delay(this.delay);
 		
@@ -152,7 +151,9 @@ public class TestCliente {
 	
 	@Test
 	public void testVuelveLogin() {
+		
 		this.logeaVentana(this.usuario, this.pass);
+		robot.delay(this.delay);
 		JButton closeButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CERRAR_SESION_CLIENTE);
 		
 		TestUtil.clickComponent(closeButton, robot);
@@ -202,8 +203,6 @@ public class TestCliente {
 	
 	@Test
 	public void testPedidoExiste() throws Exception{
-		this.buildEscenario();	
-		
 		this.empresa.agregarPedido(this.pedido);
 		
 		this.logeaVentana(this.usuario, this.pass);
@@ -239,8 +238,6 @@ public class TestCliente {
 	
 	@Test
 	public void testViajeExiste() throws Exception {
-		this.buildEscenario();
-		
 		this.empresa.agregarPedido(this.pedido);
 		this.empresa.crearViaje(this.pedido, this.choferPermanente, this.auto);
 		this.logeaVentana(this.usuario, this.pass);
@@ -273,7 +270,6 @@ public class TestCliente {
 	
 	@Test
 	public void testRealizaPedido_defecto_habilitado() throws Exception {
-		this.buildEscenario();
 		this.logeaVentana(this.usuario, this.pass);
 		
 		JTextField paxText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CANT_PAX);
@@ -298,7 +294,6 @@ public class TestCliente {
 	
 	@Test
 	public void testRealizaPedido_paxZero() throws Exception {
-		this.buildEscenario();
 		this.logeaVentana(this.usuario, this.pass);
 		
 		JTextField paxText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CANT_PAX);
@@ -323,7 +318,6 @@ public class TestCliente {
 	
 	@Test
 	public void testRealizaPedido_kmNeg() throws Exception {
-		this.buildEscenario();
 		this.logeaVentana(this.usuario, this.pass);
 		
 		JTextField paxText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CANT_PAX);
@@ -348,7 +342,6 @@ public class TestCliente {
 
 	@Test
 	public void testRealizaPedido_kmZero() throws Exception {
-		this.buildEscenario();
 		this.logeaVentana(this.usuario, this.pass);
 		
 		JTextField paxText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CANT_PAX);
@@ -373,7 +366,6 @@ public class TestCliente {
 	
 	@Test
 	public void testRealizaPedido_defecto_fallido() throws Exception {
-		this.buildEscenario();
 		this.logeaVentana(this.usuario, this.pass);
 		
 		JTextField paxText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CANT_PAX);
@@ -400,7 +392,6 @@ public class TestCliente {
 	
 	@Test
 	public void testRealizaViaje() throws Exception {
-		this.buildEscenario();
 		this.logeaVentana(this.usuario, this.pass);
 		
 		JTextField paxText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CANT_PAX);
@@ -447,8 +438,7 @@ public class TestCliente {
 	
 	@Test
 	public void testPagar_Habilitado() throws Exception{
-		
-		this.buildEscenario();
+
 		this.empresa.agregarPedido(this.pedido);
 		this.empresa.crearViaje(this.pedido, this.choferPermanente, this.auto);
 		this.logeaVentana(this.usuario, this.pass);
@@ -467,8 +457,6 @@ public class TestCliente {
 	
 	@Test
 	public void testPagar_Desabilitado() throws Exception{
-		
-		this.buildEscenario();
 		this.empresa.agregarPedido(this.pedido);
 		this.empresa.crearViaje(this.pedido, this.choferPermanente, this.auto);
 		this.logeaVentana(this.usuario, this.pass);
@@ -487,12 +475,7 @@ public class TestCliente {
 
 	
 	@Test
-	public void testActualizacionListas() throws Exception {
-		
-		this.buildEscenario();
-		this.empresa.agregarPedido(this.pedido);
-		this.empresa.crearViaje(this.pedido, this.choferPermanente, this.auto);
-		
+	public void testPagoExitoso() {
 		this.logeaVentana(this.usuario, this.pass);
 		
 		
@@ -516,21 +499,92 @@ public class TestCliente {
 		
 		robot.delay(this.delay);
 		TestUtil.clickComponent(pagarButton, robot);
+		
+		
+		robot.delay(this.delay);
+		
+		assertTrue("El pago no se realizo con exitos",pedidoArea.getText().isEmpty());
+		
+		
+	}
+	@Test
+	public void testActualizacionListas() throws Exception {
+
+		this.empresa.login(usuario, pass);
+		this.empresa.pagarYFinalizarViaje(5);
+		this.empresa.logout();
+		
+		
+
+		this.pedido = new Pedido(this.empresa.getClientes().get("Usuario1"), 3, false, false, 1, Constantes.ZONA_STANDARD);
+		this.empresa.agregarPedido(this.pedido);
+		this.empresa.crearViaje(this.pedido, this.choferPermanente, this.auto);
+		
+		
+		this.logeaVentana(this.usuario, this.pass);
+		
+		
+		robot.delay(this.delay);
+		JTextArea pedidoArea = (JTextArea) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PEDIDO_O_VIAJE_ACTUAL);
+		JList historArea = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTA_VIAJES_CLIENTE);
+		
+		ListModel historAntes = historArea.getModel();
+		String pedidoAntes = pedidoArea.getText();
+		
+		robot.delay(this.delay);
+		JTextField califText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CALIFICACION_DE_VIAJE);
+		
+		
+		
+		TestUtil.clickComponent(califText, robot);
+		TestUtil.tipeaTexto("1", robot);
+		
+		JButton pagarButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CALIFICAR_PAGAR);
+		
+		robot.delay(this.delay);
+		TestUtil.clickComponent(pagarButton, robot);
+		
+		
 		robot.delay(this.delay);
 		
 		Object texto = historArea.getModel().getElementAt(0);
-		System.out.println(texto);
+		
 		
 		robot.delay(this.delay);
 		
 		assertTrue("El text del area de pedidos y viajes debe ser distinto", pedidoAntes != pedidoArea.getText());
 		assertTrue("La lista de historico debe ser distinta", historAntes.toString() != historArea.getModel().toString());
-		assertTrue("El pedido no es el mismo", this.empresa.getViajesTerminados().get(0).toString().equals(historArea.getModel().getElementAt(0).toString()));
+		assertTrue("El pedido no es el mismo", verificarLista(this.empresa.getHistorialViajeCliente(this.empresa.getClientes().get(this.usuario)),historArea));
 		
-		
-		
-		
-		
+	}
+	public boolean verificarLista(ArrayList<Viaje> viajesCorrectos, JList<Viaje> historArea) {
+
+	    // 1. Obtener el modelo de la JList
+	    ListModel<Viaje> model = historArea.getModel();
+
+	    // 2. Comparar tamaños (la verificación más rápida)
+	    if (model.getSize() != viajesCorrectos.size()) {
+	        System.out.println("Error de verificación: El número de viajes no coincide.");
+	        System.out.println("Modelo tiene: " + model.getSize() + ", Lista correcta tiene: " + viajesCorrectos.size());
+	        return false; // No son iguales
+	    }
+
+	    // 3. Comparar elemento por elemento
+	    for (int i = 0; i < model.getSize(); i++) {
+
+	        Viaje viajeEnLista = model.getElementAt(i);
+	        Viaje viajeCorrecto = viajesCorrectos.get(i);
+
+	        // 4. ¡AQUÍ ESTÁ LA CLAVE!
+	        // Debes tener implementado el método .equals() en tu clase "Viaje"
+	        if (!viajeEnLista.equals(viajeCorrecto)) {
+	            System.out.println("Error de verificación: El viaje en la posición " + i + " no coincide.");
+	            System.out.println("Lista dice: " + viajeEnLista);
+	            System.out.println("Debería decir: " + viajeCorrecto);
+	            return false; // No son iguales
+	        }
+	    }
+	    return true; // Si llegamos aquí, son idénticos.
 	}
 
 }
