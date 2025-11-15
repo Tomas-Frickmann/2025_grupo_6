@@ -36,10 +36,12 @@ import java.awt.event.KeyEvent;
 import java.util.HashMap;
 
 import javax.swing.JTextField;
+import javax.swing.ListModel;
 import javax.swing.border.TitledBorder;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -108,7 +110,8 @@ public class TestCliente {
 			System.out.println("Problemas en el escenario");
 		}
 	}
-	public void logeaVentana() {
+	
+	public void logeaVentana(String user,String password) {
 		System.out.println(this.controlador.toString());
 		JTextField nombre = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NOMBRE_USUARIO);
 		JTextField pass = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PASSWORD);
@@ -117,11 +120,11 @@ public class TestCliente {
 		
 		
 		TestUtil.clickComponent(nombre, robot);
-		TestUtil.tipeaTexto(this.usuario, robot);
+		TestUtil.tipeaTexto(user, robot);
 		robot.delay(this.delay);
 		
 		TestUtil.clickComponent(pass, robot);
-		TestUtil.tipeaTexto(this.pass, robot);
+		TestUtil.tipeaTexto(password, robot);
 		robot.delay(this.delay);
 		
 		TestUtil.clickComponent(aceptarLog, robot);
@@ -133,15 +136,14 @@ public class TestCliente {
 	
 	@Test
 	public void testCerrarSesionHab() {
-		this.logeaVentana();
+		this.logeaVentana(this.usuario, this.pass);
 		JButton closeButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CERRAR_SESION_CLIENTE);
 		assertTrue("El boton debe estar habilitado",closeButton.isEnabled());
 	}
 	
-	
 	@Test 
-	public void testnombre() {
-		this.logeaVentana();
+	public void testNombreVentana() {
+		this.logeaVentana(this.usuario, this.pass);
 		JPanel cliente = (JPanel) TestUtil.getComponentForName((Ventana) controlador.getVista(), Constantes.PANEL_CLIENTE);
 		TitledBorder border = (TitledBorder) cliente.getBorder();
 		assertEquals("El título debe ser el nombre del cliente",
@@ -150,7 +152,7 @@ public class TestCliente {
 	
 	@Test
 	public void testVuelveLogin() {
-		this.logeaVentana();
+		this.logeaVentana(this.usuario, this.pass);
 		JButton closeButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CERRAR_SESION_CLIENTE);
 		
 		TestUtil.clickComponent(closeButton, robot);
@@ -164,7 +166,7 @@ public class TestCliente {
 	//POVA = Pedido_O_Viaje_Actual
 	@Test
 	public void testPOVA_vacio() {
-		this.logeaVentana();
+		this.logeaVentana(this.usuario, this.pass);
 		//POVA debe estar vacio y todas las componentes de nuevo pedido tienen que estar habilitadas
 		
 
@@ -199,12 +201,12 @@ public class TestCliente {
 	}
 	
 	@Test
-	public void testPedidoEx() throws Exception{
+	public void testPedidoExiste() throws Exception{
 		this.buildEscenario();	
 		
 		this.empresa.agregarPedido(this.pedido);
 		
-		this.logeaVentana();
+		this.logeaVentana(this.usuario, this.pass);
 		
 		JTextArea POVA = (JTextArea) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PEDIDO_O_VIAJE_ACTUAL);
 		assertTrue("JTextArea no debe estar vacio",!POVA.getText().isEmpty());
@@ -236,12 +238,12 @@ public class TestCliente {
 	}
 	
 	@Test
-	public void testViajeEx() throws Exception {
+	public void testViajeExiste() throws Exception {
 		this.buildEscenario();
 		
 		this.empresa.agregarPedido(this.pedido);
 		this.empresa.crearViaje(this.pedido, this.choferPermanente, this.auto);
-		this.logeaVentana();
+		this.logeaVentana(this.usuario, this.pass);
 		
 		
 		JTextField califText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CALIFICACION_DE_VIAJE);
@@ -268,10 +270,11 @@ public class TestCliente {
 		
 		
 	}
+	
 	@Test
 	public void testRealizaPedido_defecto_habilitado() throws Exception {
 		this.buildEscenario();
-		this.logeaVentana();
+		this.logeaVentana(this.usuario, this.pass);
 		
 		JTextField paxText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CANT_PAX);
 		JTextField kmText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CANT_KM);
@@ -281,7 +284,82 @@ public class TestCliente {
 		robot.delay(this.delay);
 		
 		TestUtil.clickComponent(kmText, robot);
+		TestUtil.tipeaTexto("22", robot);
+		robot.delay(this.delay);
+		
+		//Con esto alcanza porque el resto de componentes tienen valores por defecto
+		
+		
+		JButton nuevButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NUEVO_PEDIDO);
+		assertTrue("El boton de nuevo pedido debe estar habilitado",nuevButton.isEnabled());
+		
+		
+	}
+	
+	@Test
+	public void testRealizaPedido_paxZero() throws Exception {
+		this.buildEscenario();
+		this.logeaVentana(this.usuario, this.pass);
+		
+		JTextField paxText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CANT_PAX);
+		JTextField kmText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CANT_KM);
+
+		TestUtil.clickComponent(paxText,robot);
+		TestUtil.tipeaTexto("0", robot);
+		robot.delay(this.delay);
+		
+		TestUtil.clickComponent(kmText, robot);
+		TestUtil.tipeaTexto("22", robot);
+		robot.delay(this.delay);
+		
+		//Con esto alcanza porque el resto de componentes tienen valores por defecto
+		
+		
+		JButton nuevButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NUEVO_PEDIDO);
+		assertTrue("El boton de nuevo pedido debe estar deshabilitado",!nuevButton.isEnabled());
+		
+		
+	}
+	
+	@Test
+	public void testRealizaPedido_kmNeg() throws Exception {
+		this.buildEscenario();
+		this.logeaVentana(this.usuario, this.pass);
+		
+		JTextField paxText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CANT_PAX);
+		JTextField kmText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CANT_KM);
+
+		TestUtil.clickComponent(paxText,robot);
 		TestUtil.tipeaTexto("4", robot);
+		robot.delay(this.delay);
+		
+		TestUtil.clickComponent(kmText, robot);
+		TestUtil.tipeaTexto("-22", robot);
+		robot.delay(this.delay);
+		
+		//Con esto alcanza porque el resto de componentes tienen valores por defecto
+		
+		
+		JButton nuevButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NUEVO_PEDIDO);
+		assertTrue("El boton de nuevo pedido debe estar deshabilitado",!nuevButton.isEnabled());
+		
+		
+	}
+
+	@Test
+	public void testRealizaPedido_kmZero() throws Exception {
+		this.buildEscenario();
+		this.logeaVentana(this.usuario, this.pass);
+		
+		JTextField paxText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CANT_PAX);
+		JTextField kmText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CANT_KM);
+
+		TestUtil.clickComponent(paxText,robot);
+		TestUtil.tipeaTexto("4", robot);
+		robot.delay(this.delay);
+		
+		TestUtil.clickComponent(kmText, robot);
+		TestUtil.tipeaTexto("0", robot);
 		robot.delay(this.delay);
 		
 		//Con esto alcanza porque el resto de componentes tienen valores por defecto
@@ -296,7 +374,7 @@ public class TestCliente {
 	@Test
 	public void testRealizaPedido_defecto_fallido() throws Exception {
 		this.buildEscenario();
-		this.logeaVentana();
+		this.logeaVentana(this.usuario, this.pass);
 		
 		JTextField paxText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CANT_PAX);
 		JTextField kmText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CANT_KM);
@@ -306,7 +384,7 @@ public class TestCliente {
 		robot.delay(this.delay);
 		
 		TestUtil.clickComponent(kmText, robot);
-		TestUtil.tipeaTexto("4", robot);
+		TestUtil.tipeaTexto("50", robot);
 		robot.delay(this.delay);
 		
 		//Con esto alcanza porque el resto de componentes tienen valores por defecto
@@ -321,9 +399,9 @@ public class TestCliente {
 	}
 	
 	@Test
-	public void testRealizaPedido_defecto_correcto() throws Exception {
+	public void testRealizaViaje() throws Exception {
 		this.buildEscenario();
-		this.logeaVentana();
+		this.logeaVentana(this.usuario, this.pass);
 		
 		JTextField paxText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CANT_PAX);
 		JTextField kmText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CANT_KM);
@@ -333,7 +411,7 @@ public class TestCliente {
 		robot.delay(this.delay);
 		
 		TestUtil.clickComponent(kmText, robot);
-		TestUtil.tipeaTexto("4", robot);
+		TestUtil.tipeaTexto("20", robot);
 		robot.delay(this.delay);
 		
 		//Con esto alcanza porque el resto de componentes tienen valores por defecto
@@ -345,18 +423,109 @@ public class TestCliente {
 		
 		assertTrue("Campo cantidad de pasajeros y cantidad de kilometros deben estar vacios", paxText.getText().isEmpty() && kmText.getText().isEmpty());
 		
-		JTextArea POVA = (JTextArea) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PEDIDO_O_VIAJE_ACTUAL);
+		
+		
 		Cliente cliente = this.empresa.getClientes().get(this.usuario);
 		
+		//Es necesario que salga de la ventana cliente para que haga algun cambio en la disponibilidad de los JText
+		JButton cerrarButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CERRAR_SESION_CLIENTE);
+		TestUtil.clickComponent(cerrarButton, robot);
+		
 		this.empresa.crearViaje(this.empresa.getPedidoDeCliente(cliente), this.choferPermanente, this.auto); //La documentación no aclara pero asumo que de ser posible, casi instantaneamente, se crea el viaje.
+		
+		
+		this.logeaVentana(this.usuario, this.pass);
 		
 		JTextField califText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CALIFICACION_DE_VIAJE);
 		JTextField costoText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.VALOR_VIAJE);
 		
+		robot.delay(this.delay);
 		assertTrue("Campo calificacion debe estar habilitado y el campo costo distinto de vacio",califText.isEnabled() && !costoText.getText().isEmpty());
 
 
+	}
+	
+	@Test
+	public void testPagar_Habilitado() throws Exception{
 		
+		this.buildEscenario();
+		this.empresa.agregarPedido(this.pedido);
+		this.empresa.crearViaje(this.pedido, this.choferPermanente, this.auto);
+		this.logeaVentana(this.usuario, this.pass);
+		
+		robot.delay(this.delay);
+		JTextField califText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CALIFICACION_DE_VIAJE);
+		
+		TestUtil.clickComponent(califText, robot);
+		TestUtil.tipeaTexto("1", robot);
+		
+		JButton pagarButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CALIFICAR_PAGAR);
+		robot.delay(this.delay);
+		
+		assertTrue("Boton de pagar deberia estar habilitado", pagarButton.isEnabled());
+	}
+	
+	@Test
+	public void testPagar_Desabilitado() throws Exception{
+		
+		this.buildEscenario();
+		this.empresa.agregarPedido(this.pedido);
+		this.empresa.crearViaje(this.pedido, this.choferPermanente, this.auto);
+		this.logeaVentana(this.usuario, this.pass);
+		
+		robot.delay(this.delay);
+		JTextField califText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CALIFICACION_DE_VIAJE);
+		
+		TestUtil.clickComponent(califText, robot);
+		TestUtil.tipeaTexto("6", robot);
+		
+		JButton pagarButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CALIFICAR_PAGAR);
+		robot.delay(this.delay);
+		
+		assertTrue("Boton de pagar deberia estar deshabilitado", !pagarButton.isEnabled());
+	}
+
+	
+	@Test
+	public void testActualizacionListas() throws Exception {
+		
+		this.buildEscenario();
+		this.empresa.agregarPedido(this.pedido);
+		this.empresa.crearViaje(this.pedido, this.choferPermanente, this.auto);
+		
+		this.logeaVentana(this.usuario, this.pass);
+		
+		
+		robot.delay(this.delay);
+		JTextArea pedidoArea = (JTextArea) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PEDIDO_O_VIAJE_ACTUAL);
+		JList historArea = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTA_VIAJES_CLIENTE);
+		
+		ListModel historAntes = historArea.getModel();
+		String pedidoAntes = pedidoArea.getText();
+		
+		robot.delay(this.delay);
+		JTextField califText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CALIFICACION_DE_VIAJE);
+		
+		System.out.println(pedidoArea.getText());
+		
+		
+		TestUtil.clickComponent(califText, robot);
+		TestUtil.tipeaTexto("1", robot);
+		
+		JButton pagarButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CALIFICAR_PAGAR);
+		
+		robot.delay(this.delay);
+		TestUtil.clickComponent(pagarButton, robot);
+		robot.delay(this.delay);
+		
+		Object texto = historArea.getModel().getElementAt(0);
+		System.out.println(texto);
+		
+		robot.delay(this.delay);
+		
+		assertTrue("El text del area de pedidos y viajes debe ser distinto", pedidoAntes != pedidoArea.getText());
+		assertTrue("La lista de historico debe ser distinta", historAntes.toString() != historArea.getModel().toString());
+		assertTrue("El pedido no es el mismo", this.empresa.getViajesTerminados().get(0).toString().equals(historArea.getModel().getElementAt(0).toString()));
 		
 		
 		
