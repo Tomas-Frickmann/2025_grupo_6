@@ -10,7 +10,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JTextField;
 
 public class TestUtil {
-	private static int delay = 70;
+	private static int delay = 100;
 
     public static void setDelay(int delay) {
         TestUtil.delay = delay;
