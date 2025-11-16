@@ -1,8 +1,16 @@
 package testingontrolador;
 
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Field;
@@ -10,29 +18,28 @@ import java.lang.reflect.Field;
 import org.junit.Before;
 import org.junit.Test;
 
-import excepciones.ChoferNoDisponibleException;
-import excepciones.ClienteConViajePendienteException;
-import excepciones.PasswordErroneaException;
-import excepciones.UsuarioNoExisteException;
 import controlador.Controlador;
+import excepciones.ChoferNoDisponibleException;
 import excepciones.ChoferRepetidoException;
 import excepciones.ClienteConPedidoPendienteException;
+import excepciones.ClienteConViajePendienteException;
 import excepciones.ClienteSinViajePendienteException;
+import excepciones.PasswordErroneaException;
+import excepciones.UsuarioNoExisteException;
 import excepciones.VehiculoRepetidoException;
 import modeloDatos.Chofer;
 import modeloDatos.Cliente;
 import modeloDatos.Pedido;
 import modeloDatos.Vehiculo;
 import modeloNegocio.Empresa;
+import persistencia.EmpresaDTO;
 import persistencia.IPersistencia;
 import util.Constantes;
 import vista.IOptionPane;
 import vista.IVista;
-import vista.Ventana;
 
 public class TestControlador {
 
-	private Ventana ventanaMock;
 	private Controlador controlador;
 	private IVista vistaMock;
 	private IPersistencia persistenciaMock;
@@ -55,17 +62,19 @@ public class TestControlador {
 	}
 
 	@Test
-	public void testConstructorSinVentanaReal() {
+	public void testConstructor() {
 		Controlador c = mock(Controlador.class, CALLS_REAL_METHODS);
 		IVista vistaMock = mock(IVista.class);
-		when(c.getVista()).thenReturn(vistaMock);
 		IPersistencia persistenciaMock = mock(IPersistencia.class);
+		
+		when(c.getFileName()).thenReturn("empresa.bin"); 
+		when(c.getVista()).thenReturn(vistaMock);
 		when(c.getPersistencia()).thenReturn(persistenciaMock);
+
 		assertNotNull("La vista no debería ser null", c.getVista());
 		assertNotNull("La persistencia no debería ser null", c.getPersistencia());
 		assertEquals("El nombre de archivo por defecto es incorrecto", "empresa.bin", c.getFileName());
 	}
-
 	@Test
 	public void testGettersSetters() {
 		controlador.setFileName("test.bin");
@@ -79,13 +88,17 @@ public class TestControlador {
 	@Test
 	public void testLeer() {
 		try {
+			EmpresaDTO dtoMock = mock(EmpresaDTO.class);
+			when(persistenciaMock.leer()).thenReturn(dtoMock);
+
 			controlador.leer();
+            
 			verify(persistenciaMock).leer();
+            
 		} catch (Exception e) {
 			fail("El método leer() no debería haber lanzado una excepción: " + e.getMessage());
 		}
 	}
-
 	@Test
 	public void testLeerExcepcion() {
 		try {
@@ -147,7 +160,7 @@ public class TestControlador {
 		PasswordErroneaException ex = new PasswordErroneaException("u", "wrong");
 		doThrow(ex).when(empresaMock).login("u", "wrong");
 		controlador.login();
-		verify(optionPaneMock).ShowMessage(contains("Contraseña"));
+		verify(optionPaneMock).ShowMessage(contains("Password"));
 	}
 
 	@Test
@@ -200,6 +213,9 @@ public class TestControlador {
 	public void testNuevoVehiculo() {
 		when(vistaMock.getTipoVehiculo()).thenReturn(Constantes.AUTO);
 		when(vistaMock.getPatente()).thenReturn("AAA111");
+		when(vistaMock.getPlazas()).thenReturn(4);
+		when(vistaMock.isVehiculoAptoMascota()).thenReturn(false);
+
 		try {
 			controlador.nuevoVehiculo();
 			verify(empresaMock).agregarVehiculo(any());
@@ -207,17 +223,20 @@ public class TestControlador {
 			fail("El método agregarVehiculo() no debería haber lanzado una excepción: " + e.getMessage());
 		}
 	}
-
 	@Test
 	public void testNuevoVehiculoConExcepcion() throws Exception {
 		when(vistaMock.getTipoVehiculo()).thenReturn(Constantes.AUTO);
 		when(vistaMock.getPatente()).thenReturn("AAA111");
+		when(vistaMock.getPlazas()).thenReturn(4);
+		when(vistaMock.isVehiculoAptoMascota()).thenReturn(false); 
+
 		VehiculoRepetidoException ex = new VehiculoRepetidoException("AAA111", null);
 		doThrow(ex).when(empresaMock).agregarVehiculo(any());
-		controlador.nuevoVehiculo();
-		verify(optionPaneMock).ShowMessage(contains("Vehículo"));
+		
+        controlador.nuevoVehiculo();
+		
+        verify(optionPaneMock).ShowMessage(contains("Vehiculo"));
 	}
-
 	@Test
 	public void testNuevoPedido() {
 		Cliente c = mock(Cliente.class);
@@ -267,7 +286,7 @@ public class TestControlador {
 		ClienteConViajePendienteException ex = new ClienteConViajePendienteException();
 		doThrow(ex).when(empresaMock).agregarPedido(any(Pedido.class));
 		controlador.nuevoPedido();
-		verify(optionPaneMock).ShowMessage(contains("Viaje"));
+		verify(optionPaneMock).ShowMessage(contains("viaje"));
 	}
 
 	@Test
@@ -331,7 +350,7 @@ public class TestControlador {
 		ClienteConViajePendienteException ex = new ClienteConViajePendienteException();
 		doThrow(ex).when(empresaMock).crearViaje(p, ch, v);
 		controlador.nuevoViaje();
-		verify(optionPaneMock).ShowMessage(contains("Viaje"));
+		verify(optionPaneMock).ShowMessage(contains("viaje"));
 	}
 
 	@Test
