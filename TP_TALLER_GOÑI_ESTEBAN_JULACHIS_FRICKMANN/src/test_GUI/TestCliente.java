@@ -473,7 +473,6 @@ public class TestCliente {
 		assertTrue("Boton de pagar deberia estar deshabilitado", !pagarButton.isEnabled());
 	}
 
-	
 	@Test
 	public void testPagoExitoso() {
 		this.logeaVentana(this.usuario, this.pass);
@@ -481,16 +480,12 @@ public class TestCliente {
 		
 		robot.delay(this.delay);
 		JTextArea pedidoArea = (JTextArea) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PEDIDO_O_VIAJE_ACTUAL);
-		JList historArea = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTA_VIAJES_CLIENTE);
+
 		
-		ListModel historAntes = historArea.getModel();
-		String pedidoAntes = pedidoArea.getText();
 		
 		robot.delay(this.delay);
 		JTextField califText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CALIFICACION_DE_VIAJE);
-		
-		System.out.println(pedidoArea.getText());
-		
+				
 		
 		TestUtil.clickComponent(califText, robot);
 		TestUtil.tipeaTexto("1", robot);
@@ -503,10 +498,40 @@ public class TestCliente {
 		
 		robot.delay(this.delay);
 		
-		assertTrue("El pago no se realizo con exitos",pedidoArea.getText().isEmpty());
+		assertTrue("El pago no se realizo con exito",pedidoArea.getText().isEmpty());
 		
 		
 	}
+	
+	@Test
+	public void testPagoExitoso_actualizacionTextCosto() {
+		this.logeaVentana(this.usuario, this.pass);
+		
+		
+		robot.delay(this.delay);
+		JTextArea pedidoArea = (JTextArea) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PEDIDO_O_VIAJE_ACTUAL);
+
+		
+		
+		robot.delay(this.delay);
+		JTextField califText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CALIFICACION_DE_VIAJE);
+				
+		
+		TestUtil.clickComponent(califText, robot);
+		TestUtil.tipeaTexto("1", robot);
+		
+		JButton pagarButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CALIFICAR_PAGAR);
+		
+		robot.delay(this.delay);
+		TestUtil.clickComponent(pagarButton, robot);
+		
+		
+		robot.delay(this.delay);
+		JTextField costoText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.VALOR_VIAJE);
+		assertTrue("El TextField no se vacia",costoText.getText().isEmpty());
+		
+	}
+	
 	@Test
 	public void testActualizacionListas() throws Exception {
 
