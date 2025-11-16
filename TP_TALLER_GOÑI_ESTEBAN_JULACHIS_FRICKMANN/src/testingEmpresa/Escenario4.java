@@ -136,21 +136,25 @@ public class Escenario4 {
 		
 	}
     @Test
-    public void testCrearViaje_ChoferNoDisponible() {
-    	Chofer chofer = new ChoferPermanente("33333","nombreRealChofer1",2020,4);
+    public void testCrearViaje_ChoferNoDisponible_porinexistencia() {
+    	//Chofer chofer = new ChoferPermanente("33333","nombreRealChofer1",2020,4);
+    	Auto autoNuevo = new Auto("CCC333",4,false);
     	try {
-    		this.empresa.agregarChofer(chofer); //Chofer nuevo 
+    		//this.empresa.agregarChofer(chofer); //Chofer nuevo 
+    		this.empresa.agregarVehiculo(autoNuevo); //Auto nuevo
     		Pedido p = this.empresa.getPedidoDeCliente(this.empresa.getClientes().get("Usuario1")); //Pedido del cliente1
     		
-			this.empresa.crearViaje(this.pedidoCliente1, chofer, this.moto1); //con auto1 resulta igual
+			this.empresa.crearViaje(this.pedidoCliente1, this.choferPermanente, autoNuevo); //con auto1 resulta igual
 			
 			fail("Deberia lanzar ChoferNoDisponibleException");
     	}
     	catch(excepciones.ChoferNoDisponibleException e) {
-    		boolean bool = (e.getMessage() == Mensajes.CHOFER_NO_DISPONIBLE.getValor() && (e.getChofer() == chofer));
-			assertTrue("El chofer no esta registrado en la empresa", bool);
+    		boolean bool = (e.getMessage() == Mensajes.CHOFER_NO_DISPONIBLE.getValor() && (e.getChofer() == choferPermanente));
+    		
+			assertTrue("Esta mal construida la exception", bool);
 		}
     	catch(Exception e) {
+    		
     		fail(e.getMessage());
     	}
     }
