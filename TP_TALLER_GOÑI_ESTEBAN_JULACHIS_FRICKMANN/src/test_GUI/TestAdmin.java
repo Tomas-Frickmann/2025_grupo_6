@@ -23,6 +23,7 @@ import excepciones.VehiculoNoDisponibleException;
 import excepciones.VehiculoNoValidoException;
 import modeloDatos.Administrador;
 import modeloDatos.Auto;
+import modeloDatos.Chofer;
 import modeloDatos.ChoferPermanente;
 import modeloDatos.ChoferTemporario;
 import modeloDatos.Cliente;
@@ -35,6 +36,7 @@ import util.Mensajes;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.JTextField;
@@ -145,6 +147,34 @@ public class TestAdmin {
 		
 	}
 	
+	public boolean verificarLista(ArrayList listaEmpresa, JList<Object> historArea) {
+
+
+	    ListModel<Object> model = historArea.getModel();
+
+
+	    if (model.getSize() != listaEmpresa.size()) {
+	        System.out.println("Error de verificación: El número de viajes no coincide.");
+	        System.out.println("Modelo tiene: " + model.getSize() + ", Lista correcta tiene: " + listaEmpresa.size());
+	        return false; // No son iguales
+	    }
+
+
+	    for (int i = 0; i < model.getSize(); i++) {
+
+	        Object objetoEnLista = model.getElementAt(i);
+	        Object objetoCorrecto = listaEmpresa.get(i);
+
+	        if (!objetoEnLista.equals(objetoCorrecto)) {
+	            System.out.println("Error de verificación: El viaje en la posición " + i + " no coincide.");
+	            System.out.println("Lista dice: " + objetoEnLista);
+	            System.out.println("Debería decir: " + objetoCorrecto);
+	            return false; 
+	        }
+	    }
+	    return true;
+	}
+	
 	@Test
 	public void testVentanaCorrecta() { 
 		//Se fija que la ventana de administrador se haya abierto correctamente
@@ -155,54 +185,43 @@ public class TestAdmin {
 		
 	}
 	
-	//////////Visualización de información
-	@Test
-	public void testlistaChoferesTotalesCorrecto() {
-		//Se fija que la JList contenga los choferes correctamente
-	}
+	//////////Visualización de información: Archivo correspondiente
 	
-	@Test
-	public void testListaChoferesTotales_SinSeleccionar() {
-		//Los TextField 22 y 23 y la JList 21 deben estar vacios si no se selecciona ningun chofer
-		
-	}
+	//////////Sección de listados: Archivo correspondiente
 	
-	@Test
-	public void testListaViajesHistoricos() {
-		//Corrobora que al seleccionar un chofer, se muestren sus viajes historicos en la JList 21 correctamente
-	}
-	
-	@Test
-	public void testSueldoChoferCorrecto() {
-		//Hacer pedidos con baul y toda la bola y corroborar que el sueldo se calcule correctamente
-	}
-	
-	//////////Sección de listados
-	@Test
-	public void testListaClientesTotalesCorrecto() {
-		//Se fija que la JList 24 contenga los clientes correctamente
-	}
-	
-	@Test
-	public void testListaVehiculosTotalesCorrecto() {
-		//Se fija que la JList 25 contenga los vehiculos correctamente, por eso hay de los 3 tipos
-	}
-	
-	@Test
-	public void testListaViajesHistoricosCorrecta() {
-		//Se fija que la JList 26 contenga todos los viajes historicos de la empresa
-	}
-	
-	@Test 
-	public void testSueldosTotales() {
-		//El JTextField 15 debe mostrar la suma de todos los sueldos de los choferes
-	}
 
 	//////////Sección de altas choferes
 
 	@Test
 	public void testAltaChoferTemporal() {
-		//Dar de alta un chofer temporario y corroborar que se haya agregado correctamente
+		//Da de alta un chofer, se fija que el boton este habilitado
+		this.logeaVentana("admin", "admin");
+		
+		
+		JTextField dnicText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.DNI_CHOFER);
+		JTextField nameText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NOMBRE_CHOFER);
+		
+		TestUtil.clickComponent(dnicText, robot);
+		TestUtil.tipeaTexto("3333333", robot);
+		robot.delay(this.delay);
+		
+		TestUtil.clickComponent(nameText, robot);
+		TestUtil.tipeaTexto("ChoferNuevo", robot);
+		robot.delay(this.delay);
+		
+		JRadioButton tempRadio = (JRadioButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.TEMPORARIO);
+		TestUtil.clickComponent(tempRadio, robot);
+		
+		//Nuevo chofer
+		robot.delay(this.delay);
+		JButton ncButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NUEVO_CHOFER); 
+		
+
+		assertTrue("El JButton nuevo chofer deberia estar habilitado", ncButton.isEnabled());
+		TestUtil.clickComponent(ncButton, robot);
+		
+		assertTrue("Los campos deben vaciarse luego de presionar el JButton", dnicText.getText().isEmpty() && nameText.getText().isEmpty());
+		
 	}
 	
 	@Test
@@ -226,6 +245,45 @@ public class TestAdmin {
 		//El JTextField 1 no debe aceptar letras
 	}
 	
+	@Test
+	public void testListaChoferesTotales_correcta() {
+		this.logeaVentana("admin", "admin");
+		//choferes totales List
+		JList ctList = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTA_CHOFERES_TOTALES);
+		ArrayList <Chofer> ctEmpresa = new ArrayList<Chofer> (this.empresa.getChoferes().values());
+		
+		robot.delay(this.delay);
+		
+		assertTrue("La lista no es correcta", this.verificarLista(ctEmpresa, ctList));
+		
+		//Alta de un chofer
+
+		JTextField dnicText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.DNI_CHOFER);
+		JTextField nameText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NOMBRE_CHOFER);
+		
+		TestUtil.clickComponent(dnicText, robot);
+		TestUtil.tipeaTexto("3333333", robot);
+		robot.delay(this.delay);
+		
+		TestUtil.clickComponent(nameText, robot);
+		TestUtil.tipeaTexto("ChoferNuevo", robot);
+		robot.delay(this.delay);
+		
+		JRadioButton tempRadio = (JRadioButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.TEMPORARIO);
+		TestUtil.clickComponent(tempRadio, robot);
+		
+		//Nuevo chofer
+		robot.delay(this.delay);
+		JButton ncButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NUEVO_CHOFER); 
+		
+		TestUtil.clickComponent(ncButton, robot);
+		
+		ctList = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTA_CHOFERES_TOTALES);
+		ctEmpresa = new ArrayList<Chofer> (this.empresa.getChoferes().values());
+		robot.delay(this.delay*5);
+		assertTrue("La lista no es correcta", this.verificarLista(ctEmpresa, ctList));
+		
+	}
 	/////////Sección de altas vehiculos
 		
 	@Test
