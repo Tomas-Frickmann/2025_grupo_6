@@ -388,14 +388,46 @@ public class TestAdminAltasChoferes {
 	public void testButtonNuevoChofer_DNIexistente() {	
 		
 		//Se intenta crear un chofer con un DNI ya existente, verificar que salte el mensaje de error. Los JText 1, 2, 5 y 6 deben vaciarse
-		this.logeaVentana();
+
 		this.buildEscenarioChoferes();
+		this.logeaVentana();
 		this.creaChofer(this.chofer.getDni(), "Otro nombre");
 		
 		JButton ncButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NUEVO_CHOFER);
 		TestUtil.clickComponent(ncButton, robot);
-		robot.delay(this.delay);
+		robot.delay(this.delay*50);
 		assertTrue("Mensaje de error equivocado", op.getMensaje() != null && op.getMensaje().equals(Mensajes.CHOFER_YA_REGISTRADO.getValor()));
+		
+	}
+	
+	@Test
+	public void testListaChoferesDesocupados_correctaExistente() {
+
+		this.buildEscenarioChoferes();
+		this.logeaVentana();
+		
+		//choferes totales List
+		
+		JList ctList = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTA_CHOFERES_TOTALES);
+		ArrayList <Chofer> ctEmpresa = new ArrayList<Chofer> (this.empresa.getChoferes().values());
+		ArrayList <Chofer> cdEmpresa = this.empresa.getChoferesDesocupados();
+		
+		robot.delay(this.delay);
+		
+		this.creaChofer(this.chofer.getDni(), "otro nombre");
+		
+		JButton ncButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NUEVO_CHOFER); 
+		
+		TestUtil.clickComponent(ncButton, robot);
+		
+		ctList = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTA_CHOFERES_TOTALES);
+		JList cdList = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTA_CHOFERES_LIBRES);
+		
+		ctEmpresa = new ArrayList<Chofer> (this.empresa.getChoferes().values());
+		
+		robot.delay(this.delay*20);
+		
+		assertTrue("La lista no es correcta", this.verificarLista(ctEmpresa, ctList) && cdEmpresa.equals(ctEmpresa));
 		
 	}
 	

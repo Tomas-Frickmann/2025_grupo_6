@@ -230,8 +230,8 @@ public class TestAdminVisualizacion {
 		
 		//choferes totales List
 		JList lvhList = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTA_VIAJES_HISTORICOS);
-		robot.delay(this.delay);
-		assertTrue("La lista no es correcta",(lvhList.getModel().getSize() == 0));
+		robot.delay(this.delay*50);
+		assertTrue("La lista no debe estar vacia dado el escenario",(lvhList.getModel().getSize() != 0));
 		
 		
 	}

@@ -191,18 +191,6 @@ public class TestAdminAltasVehiculos {
 		}
 		
 		
-		
-		/*
-		TestUtil.clickComponent(patentes, robot);
-		TestUtil.borraJTextField(patentes, robot);
-		robot.delay(this.delay);
-		
-		TestUtil.clickComponent(paxText, robot);
-		TestUtil.borraJTextField(paxText, robot);
-		robot.delay(this.delay);
-		Comentado por que imposibilita el testing
-		*/
-		///##############agregar el JButton dentro o fuera cuando sea necesario.
 	}
 	
 	public void agregaCliente() {
