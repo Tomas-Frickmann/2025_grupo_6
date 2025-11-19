@@ -15,6 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import bin.modeloDatos.Moto;
+import excepciones.ChoferRepetidoException;
 import excepciones.PasswordErroneaException;
 import excepciones.UsuarioNoExisteException;
 import excepciones.UsuarioYaExisteException;
@@ -54,9 +55,8 @@ public class Escenario1 {
 			this.empresa.setViajesTerminados(new ArrayList <Viaje>());	
 		//Escenario vacio
 		} catch (Exception e) {
-			System.out.println("Fallo al registrar admin");
-		
-			}
+			fail("No deberia lanzar excepcion en la creacion del  escenario 1: " + e.getMessage());
+		}
 	}
 	
 	
@@ -75,10 +75,10 @@ public class Escenario1 {
 			assertTrue("Admin logeado", empresa.isAdmin());
 		}
 		catch(UsuarioNoExisteException   e) {
-			fail(e.getMessage());
+			fail("No debio tirar UsuarioNoExisteException");
 		}
 		catch( PasswordErroneaException  e) {
-			fail(e.getMessage());
+			fail("No debio tirar PasswordErroneaException");
 		}
 	}
 	
@@ -92,7 +92,7 @@ public class Escenario1 {
 			
 		}
 		catch(UsuarioYaExisteException e){
-			fail(e.getMessage());
+			fail("No debio tirar UsuarioYaExisteException");
 		}
 		
 	}
@@ -105,11 +105,12 @@ public class Escenario1 {
 			this.empresa.agregarChofer(chofer);
 			assertTrue("Chofer agregado", !this.empresa.getChoferes().isEmpty());
 		}
-		catch(Exception e){
-			fail(e.getMessage());
+		catch(ChoferRepetidoException e){
+			fail("No debio tirar ChoferRepetidoException");
+		}
 		}
 		
-	}
+	
 	
 	@Test 
 	public void testAgregarPedido_sin_Cliente() { 

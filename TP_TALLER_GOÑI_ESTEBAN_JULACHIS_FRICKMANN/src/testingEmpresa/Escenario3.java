@@ -9,6 +9,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import excepciones.ChoferNoDisponibleException;
+import excepciones.ClienteConPedidoPendienteException;
+import excepciones.ClienteConViajePendienteException;
+import excepciones.ClienteNoExisteException;
+import excepciones.PedidoInexistenteException;
+import excepciones.SinVehiculoParaPedidoException;
+import excepciones.VehiculoNoValidoException;
 import modeloDatos.*;
 import modeloNegocio.Empresa;
 import util.Constantes;
@@ -82,14 +89,13 @@ public class Escenario3 {
 			
 		}
 		catch(excepciones.ClienteNoExisteException e) {
-			fail(e.getMessage());
+			fail("No debio tirar ClienteNoExisteException");
 		}
 		catch(excepciones.ClienteConViajePendienteException e) {
-			fail(e.getMessage());
+			fail("No debio tirar ClienteConViajePendienteException");
 		}
 		catch(excepciones.ClienteConPedidoPendienteException e) {
-			fail(e.getMessage());
-		}
+			fail("No debio tirar ClienteConPedidoPendienteException");		}
 		catch(excepciones.SinVehiculoParaPedidoException e) {
 			assertTrue(Mensajes.SIN_VEHICULO_PARA_PEDIDO.getValor(), this.empresa.validarPedido(pedido) == false);
 		}
@@ -109,17 +115,17 @@ public class Escenario3 {
 			
 		}
 		catch(excepciones.ClienteNoExisteException e) {
-			fail("no deberia lanzar esta excepcion" );
+			fail("no deberia lanzar ClienteNoExisteException" );
 		}
 		catch(excepciones.ClienteConViajePendienteException e) {
 			assertEquals(Mensajes.CLIENTE_CON_VIAJE_PENDIENTE.getValor(), Mensajes.CLIENTE_CON_VIAJE_PENDIENTE.getValor(), e.getMessage());
 			
 		}
 		catch(excepciones.ClienteConPedidoPendienteException e) {
-			fail("No deberia lanzar esta ClienteConPedidoPendienteException");
+			fail("No deberia lanzar  ClienteConPedidoPendienteException");
 					}
 		catch(excepciones.SinVehiculoParaPedidoException e) {
-			fail("No deberia lanzar esta SinVehiculoParaPedidoException");
+			fail("No deberia lanzar SinVehiculoParaPedidoException");
 		}
 		catch(Exception e) {
 			fail("Excepciones externas al metodo" + e.getMessage());
@@ -268,7 +274,7 @@ public class Escenario3 {
 		//Error heredado de clienteViajePendiente
 	}
 
-	//--------------------- Tests vacíos para completar ---------------------//
+	
 	
 	@Test
 	public void testCrearViajeVehiculoDesconocido() {
@@ -283,8 +289,22 @@ public class Escenario3 {
 			// Lanza mal la excepcion
 			assertTrue("Vehiculo no disponible", true);
 		}
-		catch(Exception e) {
-			fail(e.getMessage());
+		catch(PedidoInexistenteException e) {
+			fail("No deberia lanzar PedidoInexistenteException");
+		} catch (SinVehiculoParaPedidoException e) {
+			fail("No deberia lanzar SinVehiculoParaPedidoException");
+		} catch (ClienteNoExisteException e) {
+			fail("No deberia lanzar ClienteNoExisteException");
+		} catch (ClienteConViajePendienteException e) {
+			fail("No deberia lanzar ClienteConViajePendienteException");
+		} catch (ClienteConPedidoPendienteException e) {
+			
+			fail("No deberia lanzar ClienteSinViajePendienteException");
+		} catch (ChoferNoDisponibleException e) {
+			
+			fail("No deberia lanzar ChoferNoDisponibleException");
+		} catch (VehiculoNoValidoException e) {
+			fail("No deberia lanzar VehiculoNoValidoException");
 		}
 		
 	}

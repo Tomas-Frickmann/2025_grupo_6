@@ -9,6 +9,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import excepciones.ChoferRepetidoException;
+import excepciones.ClienteConViajePendienteException;
+import excepciones.ClienteSinViajePendienteException;
+import excepciones.PasswordErroneaException;
+import excepciones.PedidoInexistenteException;
+import excepciones.UsuarioNoExisteException;
+import excepciones.VehiculoNoDisponibleException;
+import excepciones.VehiculoNoValidoException;
+import excepciones.VehiculoRepetidoException;
 import modeloDatos.*;
 import modeloNegocio.Empresa;
 import util.Constantes;
@@ -112,10 +121,14 @@ public class Escenario4 {
 		}
 		catch(excepciones.SinViajesException e){
 			fail("No deberia lanzar SinViajesException");
+		} catch (UsuarioNoExisteException e) {
+			fail("No deberia lanzar UsuarioNoExisteException ");
+		} catch (PasswordErroneaException e) {
+			fail("No deberia lanzar PasswordErroneaException ");
+		} catch (ClienteSinViajePendienteException e) {
+			fail("No deberia lanzar ClienteSinViajePendienteException ");
 		}
-		catch(Exception e) {
-			fail("No deberia lanzar ninguna excepcion: ");
-		}
+		
 	}
 	@Test 
 	public void testcalificacionDeChofer_sin_viajes() {
@@ -129,10 +142,10 @@ public class Escenario4 {
 		}
 		catch(excepciones.SinViajesException e){
 			assertEquals("Debio lanzar el siguiente mensaje"+ Mensajes.CHOFER_SIN_VIAJES.getValor(),Mensajes.CHOFER_SIN_VIAJES.getValor(), e.getMessage());
+		} catch (ChoferRepetidoException e) {
+			fail("No deberia lanzar ChoferRepetidoException ");
 		}
-		catch(Exception e) {
-			fail("No deberia lanzar ninguna otra excepcion");
-		}
+		
 		
 	}
     @Test
@@ -152,23 +165,36 @@ public class Escenario4 {
     		boolean bool = (e.getMessage() == Mensajes.CHOFER_NO_DISPONIBLE.getValor() && (e.getChofer() == choferPermanente));
     		
 			assertTrue("Esta mal construida la exception", bool);
+		} catch (VehiculoRepetidoException e) {
+			fail("No deberia lanzar VehiculoRepetidoException");
+		} catch (PedidoInexistenteException e) {
+			fail("No deberia lanzar PedidoInexistenteException");
+		} catch (VehiculoNoDisponibleException e) {
+			fail("No deberia lanzar VehiculoNoDisponibleException");
+		} catch (VehiculoNoValidoException e) {
+			fail("No deberia lanzar VehiculoNoValidoException");
+		} catch (ClienteConViajePendienteException e) {
+			fail("No deberia lanzar ClienteConViajePendienteException");
 		}
-    	catch(Exception e) {
-    		
-    		fail(e.getMessage());
-    	}
+    	
     }
 
     @Test
     public void testPagarYFinalizarViaje() {
-    	try{
-			this.empresa.login("Usuario2", "12345677");
-			this.empresa.pagarYFinalizarViaje(4);
+    
+			
+			try {
+				this.empresa.login("Usuario2", "12345677");
+				this.empresa.pagarYFinalizarViaje(4);
 			assertTrue("Viaje finalizado correctamente", this.empresa.getViajesTerminados().get(0).getCalificacion() == 4);
-    	}
-		catch(Exception e) {
-			fail(e.getMessage());
-		}
+			} catch (ClienteSinViajePendienteException e) {
+				fail("No deberia lanzar ClienteSinViajePendienteException");
+			} catch (UsuarioNoExisteException e) {
+				fail("No deberia lanzar UsuarioNoExisteException");
+			} catch (PasswordErroneaException e) {
+				fail("No deberia lanzar PasswordErroneaException");
+			}
+    	
     }
     
 
