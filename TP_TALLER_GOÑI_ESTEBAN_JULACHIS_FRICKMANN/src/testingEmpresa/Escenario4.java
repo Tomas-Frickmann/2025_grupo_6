@@ -149,7 +149,7 @@ public class Escenario4 {
 		
 	}
     @Test
-    public void testCrearViaje_ChoferNoDisponible_porinexistencia() {
+    public void testCrearViaje_ChoferNoDisponible() {
     	//Chofer chofer = new ChoferPermanente("33333","nombreRealChofer1",2020,4);
     	Auto autoNuevo = new Auto("CCC333",4,false);
     	try {
