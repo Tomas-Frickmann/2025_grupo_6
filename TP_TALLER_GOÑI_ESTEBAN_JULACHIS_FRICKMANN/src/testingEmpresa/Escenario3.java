@@ -244,13 +244,18 @@ public class Escenario3 {
 		Pedido pedido2 = new Pedido(c1, 1, false, false, 1, Constantes.ZONA_STANDARD);
 		
 		Chofer chofer1= this.empresa.getChoferesDesocupados().get(1);
+		Chofer chofer0= this.empresa.getChoferesDesocupados().get(0);
 		
 		Vehiculo vehiculo=this.empresa.getVehiculosDesocupados().get(0);
 		
 		try{
 			this.empresa.crearViaje(pedido, chofer1, vehiculo);
 			this.empresa.agregarPedido(pedido2);
-			fail("Deberia lanzar VehiculoNoDisponibleException");
+			
+
+			this.empresa.crearViaje(pedido2, chofer0, this.empresa.getVehiculosDesocupados().get(0));
+			fail("Deberia lanzar ClienteConViajePendienteException");
+			
 		}
 		catch(excepciones.PedidoInexistenteException e){
 			fail("No deberia lanzar PedidoInexistenteException");

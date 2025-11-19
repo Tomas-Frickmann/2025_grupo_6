@@ -316,26 +316,6 @@ public class TestAdminGestionPedidos {
 		
 	}
 	
-	
-	/*
-	@Test
-	public void testListaVehiculosDisponiblesCorrecta() {
-		//Se fija que la JList 18 contenga los vehiculos disponibles correctamente al seleccionar un pedido
-	
-		this.buildEscenario();
-		this.logeaVentana();
-		
-		JList vehLibreJList = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTA_VEHICULOS_DISPONIBLES);
-		//ArrayList <Chofer> ctEmpresa = new ArrayList<Chofer> (this.empresa.getChoferes().values());
-		ArrayList <Vehiculo> vehLibreEmpresa = this.empresa.getVehiculosDesocupados();
-		
-		robot.delay(this.delay);
-		assertTrue("Las listas no son iguales", this.verificarLista(vehLibreEmpresa, vehLibreJList));
-		
-	}
-	No se testea, tenes que seleccionar un pedido para que aparezcan los pedidos y creo q habiamos hablado que no se hacia
-	*/
-	
 	@Test
 	public void testNuevoViajeHab() {
 		//Hay que seleccionar un pedido, un chofer y un vehiculo. Verificar que el JButton 19 se habilite correctamente
