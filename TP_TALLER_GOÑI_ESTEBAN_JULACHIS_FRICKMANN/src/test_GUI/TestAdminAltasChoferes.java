@@ -286,7 +286,7 @@ public class TestAdminAltasChoferes {
 		JButton ncButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NUEVO_CHOFER); 
 		
 
-		assertTrue("El JButton nuevo chofer deberia estar habilitado", ncButton.isEnabled());	
+		assertTrue("El JButton nuevo chofer deberia estar deshabilitado", !ncButton.isEnabled());	
 		
 	}
 	
@@ -299,7 +299,7 @@ public class TestAdminAltasChoferes {
 		JButton ncButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NUEVO_CHOFER); 
 		
 
-		assertTrue("El JButton nuevo chofer deberia estar habilitado", ncButton.isEnabled());	
+		assertTrue("El JButton nuevo chofer deberia estar deshabilitado", !ncButton.isEnabled());	
 		
 	}
 	
@@ -395,7 +395,7 @@ public class TestAdminAltasChoferes {
 		JButton ncButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NUEVO_CHOFER);
 		TestUtil.clickComponent(ncButton, robot);
 		robot.delay(this.delay);
-		assertTrue("Mensaje de error equivocado", op.getMensaje().equals(Mensajes.CHOFER_YA_REGISTRADO.getValor()));
+		assertTrue("Mensaje de error equivocado", op.getMensaje() != null && op.getMensaje().equals(Mensajes.CHOFER_YA_REGISTRADO.getValor()));
 		
 	}
 	
@@ -428,6 +428,41 @@ public class TestAdminAltasChoferes {
 		robot.delay(this.delay);
 		
 		assertTrue("La lista no es correcta", this.verificarLista(ctEmpresa, ctList));
+		
+	}
+	
+	@Test
+	public void testListaChoferesDesocupados_correcta() {
+
+		this.buildEscenarioChoferes();
+		this.logeaVentana();
+		
+		//choferes totales List
+		
+		JList ctList = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTA_CHOFERES_TOTALES);
+		ArrayList <Chofer> ctEmpresa = new ArrayList<Chofer> (this.empresa.getChoferes().values());
+		ArrayList <Chofer> cdEmpresa = this.empresa.getChoferesDesocupados();
+		
+		robot.delay(this.delay);
+		
+		assertTrue("La lista no es correcta", this.verificarLista(ctEmpresa, ctList));
+		
+		//Alta de un chofer
+
+		this.creaChofer("1", "chofer1");
+		
+		JButton ncButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NUEVO_CHOFER); 
+		
+		TestUtil.clickComponent(ncButton, robot);
+		
+		ctList = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTA_CHOFERES_TOTALES);
+		JList cdList = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTA_CHOFERES_LIBRES);
+		
+		ctEmpresa = new ArrayList<Chofer> (this.empresa.getChoferes().values());
+		
+		robot.delay(this.delay*20);
+		
+		assertTrue("La lista no es correcta", this.verificarLista(ctEmpresa, ctList) && cdEmpresa.equals(ctEmpresa));
 		
 	}
 

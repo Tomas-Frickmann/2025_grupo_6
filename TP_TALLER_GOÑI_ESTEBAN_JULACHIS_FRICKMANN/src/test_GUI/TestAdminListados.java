@@ -29,6 +29,7 @@ import modeloDatos.Combi;
 import modeloDatos.Moto;
 import modeloDatos.Pedido;
 import modeloDatos.Vehiculo;
+import modeloDatos.Viaje;
 import modeloNegocio.Empresa;
 import util.Constantes;
 
@@ -43,7 +44,7 @@ public class TestAdminListados {
 	String nombreReal = "NombreReal";
 	
 	ChoferPermanente choferPermanente;
-	ChoferTemporario choferTemporal;
+	ChoferTemporario choferTemporario;
 	Moto moto;
 	Combi combi;
 	Auto auto;
@@ -73,6 +74,47 @@ public class TestAdminListados {
 		this.empresa.getChoferes().clear();
 		this.empresa.getChoferesDesocupados().clear();
 	}
+	
+	public void buildEscenario() {
+		try {
+			
+			this.empresa.agregarCliente("Usuario1", "12345678", "NombreReal1");
+			this.empresa.agregarCliente("Usuario2", "12345677", "nombreRealCliente2");
+			
+			this.choferPermanente = new ChoferPermanente("11111111","nombreRealChofer1",2020,4);
+			this.empresa.agregarChofer(this.choferPermanente);
+			
+			this.auto= new Auto("AAA111",4,false);
+			this.moto = new Moto("AAA222");
+			this.empresa.agregarVehiculo(auto);
+			this.empresa.agregarVehiculo(moto);
+			
+			Pedido pedido1 = new Pedido(this.empresa.getClientes().get("Usuario1"), 4, false, false, 1, Constantes.ZONA_STANDARD);
+			this.pedido = pedido1;
+			this.empresa.agregarPedido(pedido1);
+			
+			this.empresa.crearViaje(pedido1, choferPermanente, auto);
+			this.empresa.login("Usuario1", "12345678");
+			this.empresa.pagarYFinalizarViaje(3);
+			
+			this.empresa.logout();
+			
+			pedido1 = new Pedido(this.empresa.getClientes().get("Usuario1"), 4, false, false, 2, Constantes.ZONA_PELIGROSA);
+			this.pedido = pedido1;
+			this.empresa.agregarPedido(pedido1);
+			
+			this.empresa.crearViaje(pedido1, choferPermanente, auto);
+			this.empresa.login("Usuario1", "12345678");
+			this.empresa.pagarYFinalizarViaje(3);
+			
+			this.empresa.logout();
+			}
+			
+		catch(Exception e) {
+			System.out.println("Problemas en el escenario " + e.getMessage());
+		}
+	}
+	
 	public void buildEscenarioClientes() {
 		try {
 			
@@ -240,7 +282,6 @@ public class TestAdminListados {
 		TestUtil.clickComponent(regButton, robot);	
 		robot.delay(this.delay);
 	}
-
 	
 	@Test
 	public void testListaClientesTotalesCorrecto() {
@@ -272,19 +313,28 @@ public class TestAdminListados {
 		this.logeaVentana("admin", "admin");
 		
 		JList vehJList = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTA_VEHICULOS_TOTALES);
-		//ArrayList <Chofer> ctEmpresa = new ArrayList<Chofer> (this.empresa.getChoferes().values());
 		ArrayList <Vehiculo> vtEmpresa = new ArrayList<Vehiculo> (this.empresa.getVehiculos().values());
 		
 		assertTrue("Las listas no son iguales", this.verificarLista(vtEmpresa, vehJList));
 	}
 	
 	@Test
-	public void testListaViajesHistoricosCorrecta() {
+	public void testListaViajesChoferSelec() {
 		//Se fija que la JList 26 contenga todos los viajes historicos de la empresa
+		this.buildEscenario();
+		this.logeaVentana("admin","admin");
+		
+		JList histJList = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTA_VIAJES_DE_CHOFER);
+		
+		JList chofJList = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTA_CHOFERES_TOTALES);
+		chofJList.setSelectedIndex(0);
+		
+		ArrayList <Viaje> vhEmpresa = this.empresa.getHistorialViajeChofer(choferPermanente);
+		robot.delay(this.delay*50);
+		assertTrue("Las listas no son iguales", this.verificarLista(vhEmpresa, histJList));
+		
+		
 		
 	}
 	
-	
-	
-
 }

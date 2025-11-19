@@ -102,14 +102,30 @@ public class TestCliente {
 			this.empresa.agregarChofer(this.choferPermanente);
 			this.auto = new Auto("AAA111",4,false);
 			this.empresa.agregarVehiculo(this.auto);
-			this.pedido = new Pedido(this.empresa.getClientes().get("Usuario1"), 4, false, false, 1, Constantes.ZONA_STANDARD);
-			this.empresa.agregarPedido(this.pedido);
 			
-			this.empresa.crearViaje(this.pedido, choferPermanente, auto);
 		}
 		catch(Exception e) {
 			System.out.println("Problemas en el escenario" + e.getMessage());
 		}
+	}
+	
+	public void creaPedido() {
+		try {
+			this.pedido = new Pedido(this.empresa.getClientes().get("Usuario1"), 4, false, false, 1, Constantes.ZONA_STANDARD);
+			this.empresa.agregarPedido(this.pedido);
+		}
+		catch(Exception e) {
+			System.out.println("Problemas la creacion de pedidos" + e.getMessage());
+		}
+			
+		}
+	
+	public void creaViaje() {
+		try {
+			this.creaPedido();
+			this.empresa.crearViaje(this.pedido, this.choferPermanente, this.auto);
+		}
+		catch(Exception e) {}
 	}
 	
 	public void logeaVentana(String user,String password) {
@@ -131,6 +147,36 @@ public class TestCliente {
 		
 		robot.delay(this.delay);
 		
+	}
+	
+	public boolean verificarLista(ArrayList<Viaje> viajesCorrectos, JList<Viaje> historArea) {
+
+	    // 1. Obtener el modelo de la JList
+	    ListModel<Viaje> model = historArea.getModel();
+
+	    // 2. Comparar tamaños (la verificación más rápida)
+	    if (model.getSize() != viajesCorrectos.size()) {
+	        System.out.println("Error de verificación: El número de viajes no coincide.");
+	        System.out.println("Modelo tiene: " + model.getSize() + ", Lista correcta tiene: " + viajesCorrectos.size());
+	        return false; // No son iguales
+	    }
+
+	    // 3. Comparar elemento por elemento
+	    for (int i = 0; i < model.getSize(); i++) {
+
+	        Viaje viajeEnLista = model.getElementAt(i);
+	        Viaje viajeCorrecto = viajesCorrectos.get(i);
+
+	        // 4. ¡AQUÍ ESTÁ LA CLAVE!
+	        // Debes tener implementado el método .equals() en tu clase "Viaje"
+	        if (!viajeEnLista.equals(viajeCorrecto)) {
+	            System.out.println("Error de verificación: El viaje en la posición " + i + " no coincide.");
+	            System.out.println("Lista dice: " + viajeEnLista);
+	            System.out.println("Debería decir: " + viajeCorrecto);
+	            return false; // No son iguales
+	        }
+	    }
+	    return true; // Si llegamos aquí, son idénticos.
 	}
 	
 	@Test
@@ -203,7 +249,7 @@ public class TestCliente {
 	
 	@Test
 	public void testPedidoExiste() throws Exception{
-		this.empresa.agregarPedido(this.pedido);
+		this.creaPedido();
 		
 		this.logeaVentana(this.usuario, this.pass);
 		
@@ -214,7 +260,7 @@ public class TestCliente {
 		JTextField califText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CALIFICACION_DE_VIAJE);
 		JTextField costoText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.VALOR_VIAJE);
 		assertTrue("Campo calificacion debe estar deshabilitado y el campo costo vacio",!califText.isEnabled() && costoText.getText().isEmpty());
-		
+		//Está bien por que el campo de calificación no se deshabilita
 		
 		//Panel nuevo pedido debe estar todo deshabilitado
 		
@@ -238,8 +284,8 @@ public class TestCliente {
 	
 	@Test
 	public void testViajeExiste() throws Exception {
-		this.empresa.agregarPedido(this.pedido);
-		this.empresa.crearViaje(this.pedido, this.choferPermanente, this.auto);
+		this.creaPedido();
+		this.empresa.crearViaje(this.pedido, choferPermanente, auto);
 		this.logeaVentana(this.usuario, this.pass);
 		
 		
@@ -262,6 +308,8 @@ public class TestCliente {
 		assertTrue("Las CheckBox no deben estar habilitados", !baulCheck.isEnabled() && !mascotaCheck.isEnabled());
 		
 		JButton nuevButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NUEVO_PEDIDO);
+		
+		robot.delay(this.delay*50);
 		assertTrue("El boton de nuevo pedido debe estar deshabilitado",!nuevButton.isEnabled());
 		
 		
@@ -385,7 +433,7 @@ public class TestCliente {
 		JButton nuevButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NUEVO_PEDIDO);
 		TestUtil.clickComponent(nuevButton, robot);
 		robot.delay(this.delay);
-		assertTrue(Mensajes.SIN_VEHICULO_PARA_PEDIDO.getValor(),op.getMensaje().equals(Mensajes.SIN_VEHICULO_PARA_PEDIDO.getValor()));
+		assertTrue(Mensajes.SIN_VEHICULO_PARA_PEDIDO.getValor(),op.getMensaje() != null && op.getMensaje().equals(Mensajes.SIN_VEHICULO_PARA_PEDIDO.getValor()));
 		
 		
 	}
@@ -421,6 +469,8 @@ public class TestCliente {
 		//Es necesario que salga de la ventana cliente para que haga algun cambio en la disponibilidad de los JText
 		JButton cerrarButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CERRAR_SESION_CLIENTE);
 		TestUtil.clickComponent(cerrarButton, robot);
+		robot.delay(this.delay*2);
+		
 		
 		this.empresa.crearViaje(this.empresa.getPedidoDeCliente(cliente), this.choferPermanente, this.auto); //La documentación no aclara pero asumo que de ser posible, casi instantaneamente, se crea el viaje.
 		
@@ -438,8 +488,7 @@ public class TestCliente {
 	
 	@Test
 	public void testPagar_Habilitado() throws Exception{
-
-		this.empresa.agregarPedido(this.pedido);
+		this.creaPedido();
 		this.empresa.crearViaje(this.pedido, this.choferPermanente, this.auto);
 		this.logeaVentana(this.usuario, this.pass);
 		
@@ -457,8 +506,7 @@ public class TestCliente {
 	
 	@Test
 	public void testPagar_Desabilitado() throws Exception{
-		this.empresa.agregarPedido(this.pedido);
-		this.empresa.crearViaje(this.pedido, this.choferPermanente, this.auto);
+		this.creaViaje();
 		this.logeaVentana(this.usuario, this.pass);
 		
 		robot.delay(this.delay);
@@ -474,7 +522,9 @@ public class TestCliente {
 	}
 
 	@Test
-	public void testPagoExitoso() {
+	public void testPagoExitoso()  {
+		this.creaViaje();
+		
 		this.logeaVentana(this.usuario, this.pass);
 		
 		
@@ -505,6 +555,7 @@ public class TestCliente {
 	
 	@Test
 	public void testPagoExitoso_actualizacionTextCosto() {
+		this.creaViaje();
 		this.logeaVentana(this.usuario, this.pass);
 		
 		
@@ -535,6 +586,8 @@ public class TestCliente {
 	@Test
 	public void testActualizacionListas() throws Exception {
 
+		this.creaViaje();
+		
 		this.empresa.login(usuario, pass);
 		this.empresa.pagarYFinalizarViaje(5);
 		this.empresa.logout();
@@ -583,34 +636,6 @@ public class TestCliente {
 		
 	}
 	
-	public boolean verificarLista(ArrayList<Viaje> viajesCorrectos, JList<Viaje> historArea) {
-
-	    // 1. Obtener el modelo de la JList
-	    ListModel<Viaje> model = historArea.getModel();
-
-	    // 2. Comparar tamaños (la verificación más rápida)
-	    if (model.getSize() != viajesCorrectos.size()) {
-	        System.out.println("Error de verificación: El número de viajes no coincide.");
-	        System.out.println("Modelo tiene: " + model.getSize() + ", Lista correcta tiene: " + viajesCorrectos.size());
-	        return false; // No son iguales
-	    }
-
-	    // 3. Comparar elemento por elemento
-	    for (int i = 0; i < model.getSize(); i++) {
-
-	        Viaje viajeEnLista = model.getElementAt(i);
-	        Viaje viajeCorrecto = viajesCorrectos.get(i);
-
-	        // 4. ¡AQUÍ ESTÁ LA CLAVE!
-	        // Debes tener implementado el método .equals() en tu clase "Viaje"
-	        if (!viajeEnLista.equals(viajeCorrecto)) {
-	            System.out.println("Error de verificación: El viaje en la posición " + i + " no coincide.");
-	            System.out.println("Lista dice: " + viajeEnLista);
-	            System.out.println("Debería decir: " + viajeCorrecto);
-	            return false; // No son iguales
-	        }
-	    }
-	    return true; // Si llegamos aquí, son idénticos.
-	}
+	
 
 }

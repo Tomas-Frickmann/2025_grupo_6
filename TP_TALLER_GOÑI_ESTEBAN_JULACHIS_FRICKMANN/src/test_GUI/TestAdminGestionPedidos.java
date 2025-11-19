@@ -335,10 +335,80 @@ public class TestAdminGestionPedidos {
 		robot.delay(this.delay*2);
 		
 		TestUtil.clickComponent(vehiculosJList, robot);
-		robot.delay(this.delay*50);
+		robot.delay(this.delay);
 		
 		JButton nvButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NUEVO_VIAJE);
 		assertTrue("El boton nuevo viaje deberia estar habilitado", nvButton.isEnabled());
+		
+		
+	}
+	
+	@Test
+	public void testNuevoViajeHab_pedidos() {
+		//Hay que seleccionar un pedido, un chofer y un vehiculo. Verificar que el JButton 19 se habilite correctamente
+		
+		this.buildEscenario();
+		this.logeaVentana();
+		
+		
+		JList choferesJList = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTA_CHOFERES_LIBRES);
+		JList vehiculosJList = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTA_VEHICULOS_DISPONIBLES);
+				
+		
+		TestUtil.clickComponent(choferesJList, robot);
+		robot.delay(this.delay*2);
+		
+		TestUtil.clickComponent(vehiculosJList, robot);
+		robot.delay(this.delay);
+		
+		JButton nvButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NUEVO_VIAJE);
+		assertTrue("El boton nuevo viaje deberia estar deshabilitado", !nvButton.isEnabled());
+		
+		
+	}
+	
+	@Test
+	public void testNuevoViajeHab_choferes() {
+		//Hay que seleccionar un pedido, un chofer y un vehiculo. Verificar que el JButton 19 se habilite correctamente
+		
+		this.buildEscenario();
+		this.logeaVentana();
+		
+		JList pedidosJList = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTA_PEDIDOS_PENDIENTES);
+
+		JList vehiculosJList = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTA_VEHICULOS_DISPONIBLES);
+		
+		pedidosJList.setSelectedIndex(0);
+		robot.delay(this.delay);
+		
+		TestUtil.clickComponent(vehiculosJList, robot);
+		robot.delay(this.delay);
+		
+		JButton nvButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NUEVO_VIAJE);
+		assertTrue("El boton nuevo viaje deberia estar deshabilitado", !nvButton.isEnabled());
+		
+		
+	}
+	
+	@Test
+	public void testNuevoViajeHab_vehiculo() {
+		//Hay que seleccionar un pedido, un chofer y un vehiculo. Verificar que el JButton 19 se habilite correctamente
+		
+		this.buildEscenario();
+		this.logeaVentana();
+		
+		JList pedidosJList = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTA_PEDIDOS_PENDIENTES);
+		JList choferesJList = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTA_CHOFERES_LIBRES);
+		
+		pedidosJList.setSelectedIndex(0);
+		robot.delay(this.delay);
+		
+		
+		TestUtil.clickComponent(choferesJList, robot);
+		robot.delay(this.delay);
+		
+		JButton nvButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NUEVO_VIAJE);
+		assertTrue("El boton nuevo viaje deberia estar deshabilitado", !nvButton.isEnabled());
 		
 		
 	}
