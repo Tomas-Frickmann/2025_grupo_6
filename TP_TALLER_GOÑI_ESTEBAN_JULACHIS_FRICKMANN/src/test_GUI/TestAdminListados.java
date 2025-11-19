@@ -8,7 +8,9 @@ import java.awt.Robot;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JList;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.ListModel;
 
@@ -17,17 +19,20 @@ import org.junit.Before;
 import org.junit.Test;
 
 import controlador.Controlador;
+import excepciones.VehiculoRepetidoException;
 import modeloDatos.Auto;
+import modeloDatos.Chofer;
 import modeloDatos.ChoferPermanente;
 import modeloDatos.ChoferTemporario;
 import modeloDatos.Cliente;
 import modeloDatos.Combi;
 import modeloDatos.Moto;
 import modeloDatos.Pedido;
+import modeloDatos.Vehiculo;
 import modeloNegocio.Empresa;
 import util.Constantes;
 
-public class testAdminListados {
+public class TestAdminListados {
 	Robot robot;
 	Controlador controlador;
 	FalsoOptionPane op = new FalsoOptionPane();
@@ -83,6 +88,23 @@ public class testAdminListados {
 			System.out.println("Problemas en el escenario " + e.getMessage());
 		}
 	}
+	
+	public void buildExcenarioVehiculos() {
+		this.auto = new Auto("AAA111",4,true);
+		this.moto = new Moto("MMM222");
+		this.combi = new Combi("CCC333",8,true);
+		
+		try {
+			this.empresa.agregarVehiculo(this.auto);
+			this.empresa.agregarVehiculo(this.moto);
+			this.empresa.agregarVehiculo(this.combi);
+		
+		} catch (VehiculoRepetidoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public void logeaVentana(String user,String password) {
 		JTextField nombre = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NOMBRE_USUARIO);
 		JTextField pass = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PASSWORD);
@@ -103,70 +125,6 @@ public class testAdminListados {
 		robot.delay(this.delay);
 		
 	}
-
-	
-	@Test
-	public void testListaClientesTotalesCorrecto() {
-			//añande un usuario 
-		
-	
-		buildEscenarioClientes();
-		JButton regButtoninicial = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REGISTRAR);
-		
-		TestUtil.clickComponent(regButtoninicial, robot);
-		robot.delay(this.delay);
-		
-		JTextField nomText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REG_USSER_NAME);
-		JTextField passText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REG_PASSWORD);
-		JTextField passTextAgain = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REG_CONFIRM_PASSWORD);
-		JTextField realText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REG_REAL_NAME);
-		JButton regButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REG_BUTTON_REGISTRAR);
-		
-		
-		TestUtil.clickComponent(nomText, robot);
-		TestUtil.tipeaTexto("UsuarioNuevo", robot);
-		robot.delay(this.delay);
-		
-		TestUtil.clickComponent(passText, robot);
-		TestUtil.tipeaTexto("123456", robot);
-		robot.delay(this.delay);
-		
-		TestUtil.clickComponent(passTextAgain, robot);
-		TestUtil.tipeaTexto("123456", robot);
-		robot.delay(this.delay);
-		
-		TestUtil.clickComponent(realText, robot);
-		TestUtil.tipeaTexto("NombreNuevo", robot);
-		robot.delay(this.delay);
-		
-		
-		TestUtil.clickComponent(regButton, robot);	
-		/*
-		robot.delay(this.delay);
-		logeaVentana("admin", "admin");
-		JList jlistclientes = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTADO_DE_CLIENTES);
-		ArrayList <Cliente> clEmpresa = new ArrayList<Cliente> (this.empresa.getClientes().values());
-		
-		robot.delay(this.delay);
-		
-				
-		assertTrue("La lista clientes no es correcta", this.verificarLista(clEmpresa, jlistclientes));
-		
-		
-		
-*/		//Se fija que la JList 24 contenga los clientes correctamente
-	}
-	
-	@Test
-	public void testListaVehiculosTotalesCorrecto() {
-		//Se fija que la JList 25 contenga los vehiculos correctamente, por eso hay de los 3 tipos
-	}
-	
-	@Test
-	public void testListaViajesHistoricosCorrecta() {
-		//Se fija que la JList 26 contenga todos los viajes historicos de la empresa
-	}
-	
 	
 	public boolean verificarLista(ArrayList listaEmpresa, JList<Object> historArea) {
 
@@ -195,5 +153,138 @@ public class testAdminListados {
 	    }
 	    return true;
 	}
+	
+	public void agregaVehiculo(String patente, int tipo, int plazas, boolean mascota) {
+		
+		JTextField patentes = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.PATENTE);
+		
+		TestUtil.clickComponent(patentes, robot);
+		TestUtil.tipeaTexto(patente, robot);
+		robot.delay(this.delay);
+		
+		JRadioButton rad1 = (JRadioButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.AUTO);
+		JRadioButton rad2 = (JRadioButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.MOTO);
+		JRadioButton rad3 = (JRadioButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.COMBI);
+		
+		if (tipo == 1)
+			TestUtil.clickComponent(rad1, robot);
+		else
+			if(tipo ==2)
+				TestUtil.clickComponent(rad2, robot);
+			else
+				TestUtil.clickComponent(rad3, robot);
+		
+		robot.delay(this.delay);
+		
+		JTextField paxText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CANTIDAD_PLAZAS);
+		if(tipo != 2) {
+			if(mascota) {
+				JCheckBox mascBox = (JCheckBox) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.CHECK_VEHICULO_ACEPTA_MASCOTA);
+				TestUtil.clickComponent(mascBox, robot);
+				robot.delay(this.delay);
+			}
+			
+			
+			TestUtil.clickComponent(paxText, robot);
+			TestUtil.tipeaTexto(String.valueOf(plazas), robot);
+			robot.delay(this.delay);
+		}
+		
+		JButton vehButton= (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NUEVO_VEHICULO);
+		TestUtil.clickComponent(vehButton, robot);
+		robot.delay(this.delay);
+		
+		/*
+		TestUtil.clickComponent(patentes, robot);
+		TestUtil.borraJTextField(patentes, robot);
+		robot.delay(this.delay);
+		
+		TestUtil.clickComponent(paxText, robot);
+		TestUtil.borraJTextField(paxText, robot);
+		robot.delay(this.delay);
+		Comentado por que imposibilita el testing
+		*/
+		
+		
+	}
+	
+	public void agregaCliente() {
+		JButton regButtoninicial = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REGISTRAR);
+		
+		TestUtil.clickComponent(regButtoninicial, robot);
+		robot.delay(this.delay);
+		
+		JTextField nomText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REG_USSER_NAME);
+		JTextField passText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REG_PASSWORD);
+		JTextField passTextAgain = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REG_CONFIRM_PASSWORD);
+		JTextField realText = (JTextField) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REG_REAL_NAME);
+		JButton regButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.REG_BUTTON_REGISTRAR);
+		
+		
+		TestUtil.clickComponent(nomText, robot);
+		TestUtil.tipeaTexto("UsuarioNuevo", robot);
+		robot.delay(this.delay);
+		
+		TestUtil.clickComponent(passText, robot);
+		TestUtil.tipeaTexto("123456", robot);
+		robot.delay(this.delay);
+		
+		TestUtil.clickComponent(passTextAgain, robot);
+		TestUtil.tipeaTexto("123456", robot);
+		robot.delay(this.delay);
+		
+		TestUtil.clickComponent(realText, robot);
+		TestUtil.tipeaTexto("NombreNuevo", robot);
+		robot.delay(this.delay);
+		
+		TestUtil.clickComponent(regButton, robot);	
+		robot.delay(this.delay);
+	}
+
+	
+	@Test
+	public void testListaClientesTotalesCorrecto() {
+			//añande un usuario
+			//Se fija que la JList 24 contenga los clientes correctamente
+		
+	
+		buildEscenarioClientes();
+		this.agregaCliente();
+		
+		
+		logeaVentana("admin", "admin");
+		
+		JList jlistclientes = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTADO_DE_CLIENTES);
+		ArrayList <Cliente> clEmpresa = new ArrayList<Cliente> (this.empresa.getClientes().values());
+		
+		robot.delay(this.delay);
+		
+				
+		assertTrue("La lista clientes no es correcta", this.verificarLista(clEmpresa, jlistclientes));
+		
+		
+	}
+	
+	@Test
+	public void testListaVehiculosTotalesCorrecto() {
+		//Se fija que la JList 25 contenga los vehiculos correctamente, por eso hay de los 3 tipos
+		this.buildExcenarioVehiculos();
+		this.logeaVentana("admin", "admin");
+		
+		JList vehJList = (JList) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.LISTA_VEHICULOS_TOTALES);
+		//ArrayList <Chofer> ctEmpresa = new ArrayList<Chofer> (this.empresa.getChoferes().values());
+		ArrayList <Vehiculo> vtEmpresa = new ArrayList<Vehiculo> (this.empresa.getVehiculos().values());
+		
+		assertTrue("Las listas no son iguales", this.verificarLista(vtEmpresa, vehJList));
+	}
+	
+	@Test
+	public void testListaViajesHistoricosCorrecta() {
+		//Se fija que la JList 26 contenga todos los viajes historicos de la empresa
+		
+	}
+	
+	
+	
 
 }

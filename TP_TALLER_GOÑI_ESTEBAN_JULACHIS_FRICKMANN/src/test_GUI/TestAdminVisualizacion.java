@@ -224,6 +224,7 @@ public class TestAdminVisualizacion {
 	@Test
 	public void testListaViajesHistoricos_Vacio() {
 		//Corroborar que la JList 21 este vacio
+		//Esto esta chequeado en la función anterior
 		
 		this.logeaVentana("admin", "admin");
 		
