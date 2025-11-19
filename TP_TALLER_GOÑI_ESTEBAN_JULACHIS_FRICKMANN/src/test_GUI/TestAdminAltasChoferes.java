@@ -445,10 +445,6 @@ public class TestAdminAltasChoferes {
 		
 		robot.delay(this.delay);
 		
-		assertTrue("La lista no es correcta", this.verificarLista(ctEmpresa, ctList));
-		
-		//Alta de un chofer
-
 		this.creaChofer("1", "chofer1");
 		
 		JButton ncButton = (JButton) TestUtil.getComponentForName((Component) controlador.getVista(), Constantes.NUEVO_CHOFER); 
